@@ -19,6 +19,9 @@ dist-ssr
 # Firebase
 .firebase/
 
+# Demo recordings cache
+demo_recordings/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
