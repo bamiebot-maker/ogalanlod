@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Landmark, Check, X, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
+import { Landmark, Check, X, AlertCircle, Loader2, ShieldCheck, User } from 'lucide-react';
 import { 
   POPULAR_NIGERIAN_BANKS, 
   getLiveNigerianBanks, 
@@ -14,16 +14,19 @@ interface BankSetupModalProps {
   isOpen: boolean;
   onClose: () => void;
   landlordName?: string;
+  onSaveAccount?: (details: BankVerificationResult) => void;
 }
 
 export const BankSetupModal: React.FC<BankSetupModalProps> = ({
   isOpen,
   onClose,
-  landlordName = 'Landlord',
+  landlordName = '',
+  onSaveAccount,
 }) => {
   const [banks, setBanks] = useState<NigerianBank[]>(POPULAR_NIGERIAN_BANKS);
   const [selectedBankCode, setSelectedBankCode] = useState('058'); // GTBank default
   const [accountNumber, setAccountNumber] = useState('');
+  const [accountName, setAccountName] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifiedResult, setVerifiedResult] = useState<BankVerificationResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -35,6 +38,9 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
       setVerifiedResult(existing);
       setAccountNumber(existing.accountNumber);
       setSelectedBankCode(existing.bankCode);
+      setAccountName(existing.accountName);
+    } else if (landlordName && landlordName.toLowerCase() !== 'landlord') {
+      setAccountName(landlordName);
     }
 
     getLiveNigerianBanks().then((list) => {
@@ -42,37 +48,48 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
         setBanks(list);
       }
     });
-  }, []);
+  }, [isOpen, landlordName]);
 
-  // Auto-verify when 10 digits are reached
+  // Auto-verify when 10 digits and/or name are entered
   useEffect(() => {
     const clean = accountNumber.replace(/\D/g, '');
     if (clean.length === 10) {
-      handleVerify(clean, selectedBankCode);
+      const timer = setTimeout(() => {
+        handleVerify(clean, selectedBankCode, accountName);
+      }, 350);
+      return () => clearTimeout(timer);
     } else {
       setVerifiedResult(null);
       setErrorMsg(null);
     }
-  }, [accountNumber, selectedBankCode]);
+  }, [accountNumber, selectedBankCode, accountName]);
 
-  const handleVerify = async (accNum: string, bCode: string) => {
+  const handleVerify = async (accNum: string, bCode: string, nameInput: string) => {
     setIsVerifying(true);
     setErrorMsg(null);
-    setVerifiedResult(null);
 
-    const result = await resolveBankAccount(accNum, bCode, landlordName);
+    const result = await resolveBankAccount(accNum, bCode, nameInput);
     setIsVerifying(false);
 
     if (result.success) {
       setVerifiedResult(result);
+      if (result.accountName && result.accountName !== 'LANDLORD' && result.accountName !== accountName.toUpperCase()) {
+        setAccountName(result.accountName);
+      }
     } else {
-      setErrorMsg(result.error || 'Failed to verify account number.');
+      setVerifiedResult(null);
+      if (result.error) {
+        setErrorMsg(result.error);
+      }
     }
   };
 
   const handleSave = () => {
     if (verifiedResult) {
       saveLandlordBankAccount(verifiedResult);
+      if (onSaveAccount) {
+        onSaveAccount(verifiedResult);
+      }
       onClose();
     }
   };
@@ -115,7 +132,7 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
             <select
               value={selectedBankCode}
               onChange={(e) => setSelectedBankCode(e.target.value)}
-              className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
+              className="w-full px-3 py-2.5 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-bold focus:outline-none focus:border-orange-500 focus:bg-white"
             >
               {banks.map((b) => (
                 <option key={`${b.code}-${b.name}`} value={b.code}>
@@ -142,6 +159,28 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
               {isVerifying && (
                 <Loader2 className="w-4 h-4 text-orange-500 animate-spin absolute right-3 top-3" />
               )}
+            </div>
+          </div>
+
+          {/* Account Holder Full Name Input */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-stone-700">
+                Account Holder Full Name
+              </label>
+              <span className="text-[10px] text-stone-400 font-medium">
+                (as registered on bank/BVN)
+              </span>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+                placeholder="e.g. Ibrahim Sobur Bamidele"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs font-bold text-stone-950 focus:outline-none focus:border-orange-500 focus:bg-white"
+              />
+              <User className="w-3.5 h-3.5 text-stone-400 absolute right-3 top-3" />
             </div>
           </div>
 

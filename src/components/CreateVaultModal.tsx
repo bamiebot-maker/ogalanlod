@@ -23,11 +23,11 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
   const { wallet } = usePollar();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [propertyName, setPropertyName] = useState('Lekki Phase 1 Penthouse - Flat 4B');
-  const [propertyAddress, setPropertyAddress] = useState('14 Admiralty Way, Lekki Phase 1, Lagos');
+  const [propertyName, setPropertyName] = useState('');
+  const [propertyAddress, setPropertyAddress] = useState('');
   const [landlordName, setLandlordName] = useState('');
   const [tenantName, setTenantName] = useState('');
-  const [tenantPhone, setTenantPhone] = useState('+234 803 987 6543');
+  const [tenantPhone, setTenantPhone] = useState('');
   const [depositAmount, setDepositAmount] = useState<number>(500);
   const [currencyMode, setCurrencyMode] = useState<'USD' | 'NGN'>('USD');
   const [leaseDurationMonths, setLeaseDurationMonths] = useState<number>(12);
@@ -194,7 +194,7 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
                     type="text"
                     value={landlordName}
                     onChange={(e) => setLandlordName(e.target.value)}
-                    placeholder="e.g. Babatunde Alabi"
+                    placeholder="e.g. Ibrahim Bamidele"
                     className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
                   />
                 </div>
@@ -206,7 +206,7 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
                     type="text"
                     value={tenantName}
                     onChange={(e) => setTenantName(e.target.value)}
-                    placeholder="e.g. Emeka Nwosu"
+                    placeholder="e.g. Chinedu Okafor"
                     className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
                   />
                 </div>
@@ -224,7 +224,7 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
                     value={tenantPhone}
                     onChange={(e) => setTenantPhone(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
-                    placeholder="+234 803 987 6543"
+                    placeholder="+234 803 123 4567"
                   />
                 </div>
                 <span className="text-[10px] text-stone-500 mt-1 block">

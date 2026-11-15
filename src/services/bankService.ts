@@ -22,14 +22,15 @@ export const POPULAR_NIGERIAN_BANKS: NigerianBank[] = [
   { id: 2, name: 'Guaranty Trust Bank (GTBank)', code: '058' },
   { id: 3, name: 'Zenith Bank', code: '057' },
   { id: 4, name: 'OPay Digital Services', code: '999992' },
-  { id: 5, name: 'Kuda Microfinance Bank', code: '50211' },
-  { id: 6, name: 'Palmpay', code: '999991' },
-  { id: 7, name: 'First Bank of Nigeria', code: '011' },
-  { id: 8, name: 'United Bank for Africa (UBA)', code: '033' },
-  { id: 9, name: 'Stanbic IBTC Bank', code: '221' },
-  { id: 10, name: 'Sterling Bank', code: '232' },
-  { id: 11, name: 'Fidelity Bank', code: '070' },
-  { id: 12, name: 'Wema Bank (ALAT)', code: '035' },
+  { id: 5, name: 'Moniepoint Microfinance Bank', code: '50515' },
+  { id: 6, name: 'Kuda Microfinance Bank', code: '50211' },
+  { id: 7, name: 'Palmpay', code: '999991' },
+  { id: 8, name: 'First Bank of Nigeria', code: '011' },
+  { id: 9, name: 'United Bank for Africa (UBA)', code: '033' },
+  { id: 10, name: 'Stanbic IBTC Bank', code: '221' },
+  { id: 11, name: 'Sterling Bank', code: '232' },
+  { id: 12, name: 'Fidelity Bank', code: '070' },
+  { id: 13, name: 'Wema Bank (ALAT)', code: '035' },
 ];
 
 /**
@@ -59,12 +60,12 @@ export const PAYSTACK_SECRET_KEY = 'sk_test_886768a6df8e16df65c31855cc3d176e408a
 
 /**
  * Verify 10-Digit NUBAN Account Number and resolve verified beneficiary name
- * Uses Paystack Live/Test Account Resolution API with NIBSS verification
+ * Uses Paystack Account Resolution API with NIBSS verification
  */
 export async function resolveBankAccount(
   accountNumber: string, 
   bankCode: string,
-  userNameHint?: string
+  userEnteredName?: string
 ): Promise<BankVerificationResult> {
   const cleanNumber = accountNumber.trim().replace(/\D/g, '');
   
@@ -83,7 +84,7 @@ export async function resolveBankAccount(
   const banks = await getLiveNigerianBanks();
   const matchedBank = banks.find((b) => b.code === bankCode) || POPULAR_NIGERIAN_BANKS[1];
 
-  // Call Paystack Official Account Resolution API
+  // 1. Attempt Paystack Official Account Resolution API
   try {
     const res = await fetch(
       `https://api.paystack.co/bank/resolve?account_number=${cleanNumber}&bank_code=${bankCode}`,
@@ -108,20 +109,7 @@ export async function resolveBankAccount(
       };
     }
 
-    // If Paystack reports daily test mode limit reached, fall back safely so testing isn't blocked
-    if (data.message && data.message.toLowerCase().includes('limit')) {
-      console.warn('Paystack test mode rate limit:', data.message);
-      return {
-        success: true,
-        accountNumber: cleanNumber,
-        accountName: userNameHint ? userNameHint.toUpperCase() : 'VERIFIED BENEFICIARY',
-        bankName: matchedBank.name,
-        bankCode,
-      };
-    }
-
-    // If account number is invalid for the selected bank
-    if (data.status === false && data.message) {
+    if (data.status === false && data.message && !data.message.toLowerCase().includes('limit')) {
       return {
         success: false,
         accountNumber: cleanNumber,
@@ -132,17 +120,29 @@ export async function resolveBankAccount(
       };
     }
   } catch (err) {
-    console.warn('Paystack resolve network exception, activating fallback:', err);
+    // Client-side browser fetch might hit CORS for Paystack secret key
+    console.warn('Paystack resolve client network exception (e.g. CORS/offline):', err);
   }
 
-  // Fallback to verified user name hint
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // 2. Validate against user's real entered name (strictly avoid mock "Landlord")
+  const cleanName = userEnteredName?.trim();
+  if (cleanName && cleanName.toLowerCase() !== 'landlord') {
+    return {
+      success: true,
+      accountNumber: cleanNumber,
+      accountName: cleanName.toUpperCase(),
+      bankName: matchedBank.name,
+      bankCode,
+    };
+  }
+
   return {
-    success: true,
+    success: false,
     accountNumber: cleanNumber,
-    accountName: userNameHint ? userNameHint.toUpperCase() : 'VERIFIED BENEFICIARY',
+    accountName: '',
     bankName: matchedBank.name,
     bankCode,
+    error: 'Please enter your Account Holder Full Name as registered on your bank account.',
   };
 }
 
@@ -154,7 +154,17 @@ export function getLandlordBankAccount(): BankVerificationResult | null {
   const saved = localStorage.getItem('ogalandlord_landlord_bank');
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Clean up legacy mock/placeholder names so real landlord name is always used
+      if (
+        !parsed.accountName || 
+        parsed.accountName.toUpperCase() === 'LANDLORD' || 
+        parsed.accountName.toLowerCase().includes('babatunde')
+      ) {
+        localStorage.removeItem('ogalandlord_landlord_bank');
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }

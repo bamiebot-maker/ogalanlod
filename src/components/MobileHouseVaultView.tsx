@@ -680,6 +680,11 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
         isOpen={isBankModalOpen}
         onClose={() => setIsBankModalOpen(false)}
         landlordName={vault.landlordName}
+        onSaveAccount={(saved) => {
+          if (saved.accountName && saved.accountName.toLowerCase() !== 'landlord') {
+            onUpdateVault({ ...vault, landlordName: saved.accountName });
+          }
+        }}
       />
 
       <TenantPaymentCheckoutModal

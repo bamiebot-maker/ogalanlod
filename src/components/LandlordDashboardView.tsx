@@ -92,7 +92,7 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
           >
             <Building className="w-4 h-4 text-orange-500 shrink-0" />
             <span className="text-xs font-bold text-stone-900">
-              + Deploy First Lease Vault
+              {user.name && user.name !== 'Landlord' ? `${user.name} • + Deploy Vault` : '+ Deploy First Lease Vault'}
             </span>
           </button>
         )}
@@ -207,30 +207,47 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
         </div>
       </div>
 
-      {/* 4. AUTO-OFFRAMP DESTINATION CARD (Clean White with Solar Warmth) */}
+      {/* 4. AUTO-OFFRAMP DESTINATION CARD */}
       <div className="p-3.5 rounded-2xl bg-white border border-stone-200/90 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-orange-600 shrink-0">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+            savedBank 
+              ? 'bg-orange-50 border border-orange-200/80 text-orange-600' 
+              : 'bg-stone-100 border border-stone-200 text-stone-400'
+          }`}>
             <Landmark className="w-5 h-5" />
           </div>
           <div>
             <span className="text-[9px] font-black text-stone-400 uppercase tracking-wider block">
               Auto-Offramp Destination
             </span>
-            <span className="text-xs font-black text-stone-950 block">
-              {savedBank ? `${savedBank.bankName} • ${savedBank.accountNumber.slice(-4)}` : 'OPay Digital Bank (PayCom) • 7282'}
-            </span>
-            <span className="text-[10px] text-emerald-600 font-bold">
-              Verified: {savedBank?.accountName || user.name}
-            </span>
+            {savedBank ? (
+              <>
+                <span className="text-xs font-black text-stone-950 block">
+                  {savedBank.bankName} • {savedBank.accountNumber}
+                </span>
+                <span className="text-[10px] text-emerald-600 font-bold">
+                  Verified: {savedBank.accountName}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-xs font-bold text-stone-700 block">
+                  No Payout Bank Connected
+                </span>
+                <span className="text-[10px] text-amber-600 font-medium">
+                  Add NUBAN account for instant NGN payouts
+                </span>
+              </>
+            )}
           </div>
         </div>
 
         <button
           onClick={onOpenBank}
-          className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 transition-colors"
+          className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 transition-colors"
         >
-          <span>Change</span>
+          <span>{savedBank ? 'Change' : '+ Add Bank'}</span>
           <ArrowRight className="w-3 h-3" />
         </button>
       </div>

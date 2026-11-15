@@ -9,7 +9,7 @@ import { ShareTenantLinkModal } from './components/ShareTenantLinkModal';
 import { BankSetupModal } from './components/BankSetupModal';
 import { CreateVaultModal } from './components/CreateVaultModal';
 import { PollarInspectorModal } from './components/PollarInspectorModal';
-import { INITIAL_VAULTS, DEFAULT_USER } from './data/mockData';
+import { DEFAULT_USER } from './data/mockData';
 import type { LeaseVault, UserProfile } from './types';
 import { saveVault, fetchAllVaults, fetchVaultById } from './services/supabase';
 import { Shield, Sparkles, User, Building } from 'lucide-react';
@@ -28,19 +28,31 @@ export function App() {
   });
 
   const [vaults, setVaults] = useState<LeaseVault[]>(() => {
+    // One-time clean reset to clear legacy demo vaults, balances & corrupted bank records
+    const isCleaned = localStorage.getItem('ogalandlord_v3_clean_reset');
+    if (!isCleaned) {
+      localStorage.removeItem('ogalandlord_vaults');
+      localStorage.removeItem('ogalandlord_landlord_bank');
+      localStorage.setItem('ogalandlord_v3_clean_reset', 'true');
+      return [];
+    }
     const saved = localStorage.getItem('ogalandlord_vaults');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
           // Remove old mock/demo vaults so real landlords start clean
-          return parsed.filter((v: LeaseVault) => !['HSE-7821', 'HSE-9043', 'HSE-4412'].includes(v.id));
+          return parsed.filter((v: LeaseVault) => 
+            !['HSE-7821', 'HSE-9043', 'HSE-4412', 'VL-7821', 'HSE-1933', 'HSE-5035', 'HSE-4116', 'HSE-5673', 'HSE-7988'].includes(v.id) &&
+            v.landlordName !== 'Chief Babatunde Alabi' &&
+            v.tenantName !== 'Emeka Nwosu'
+          );
         }
       } catch (e) {
         console.error(e);
       }
     }
-    return INITIAL_VAULTS;
+    return [];
   });
 
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(() => {
@@ -435,6 +447,11 @@ export function App() {
         isOpen={isBankModalOpen}
         onClose={() => setIsBankModalOpen(false)}
         landlordName={user.name}
+        onSaveAccount={(saved) => {
+          if (saved.accountName && saved.accountName.toLowerCase() !== 'landlord') {
+            setUser((prev) => ({ ...prev, name: saved.accountName }));
+          }
+        }}
       />
 
       {/* 3. Create New House Vault Modal */}
