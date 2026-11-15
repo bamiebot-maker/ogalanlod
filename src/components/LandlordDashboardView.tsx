@@ -9,7 +9,7 @@ import { getLandlordBankAccount } from '../services/bankService';
 interface LandlordDashboardViewProps {
   user: UserProfile;
   vaults: LeaseVault[];
-  selectedVault: LeaseVault;
+  selectedVault: LeaseVault | null;
   onSelectVault: (vault: LeaseVault) => void;
   onOpenCreate: () => void;
   onOpenBank: () => void;
@@ -39,7 +39,7 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
   const totalAccruedYield = vaults.reduce((acc, v) => acc + (v.accruedYield || 0), 0);
   const activeCount = vaults.filter((v) => v.status === 'earning_yield').length;
 
-  const currentVault = selectedVault || vaults[0];
+  const currentVault = selectedVault || (vaults.length > 0 ? vaults[0] : null);
 
   const handleExportCSV = () => {
     const csvContent = [
@@ -72,18 +72,30 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
       
       {/* 1. TOP PROPERTY SWITCHER (Modeled after Image 2: Light Clean Vibe) */}
       <div className="flex items-center justify-between pt-1">
-        <div 
-          onClick={() => setIsSwitchOpen(true)}
-          className="flex items-center space-x-2 bg-white hover:bg-stone-50 border border-stone-200/90 rounded-2xl px-3.5 py-2 cursor-pointer transition-all shadow-sm max-w-[80%]"
-        >
-          <Building className="w-4 h-4 text-orange-500 shrink-0" />
-          <span className="text-xs font-bold text-stone-900 truncate">
-            {currentVault.propertyName}
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black shrink-0">
-            Switch ▾
-          </span>
-        </div>
+        {currentVault ? (
+          <div 
+            onClick={() => setIsSwitchOpen(true)}
+            className="flex items-center space-x-2 bg-white hover:bg-stone-50 border border-stone-200/90 rounded-2xl px-3.5 py-2 cursor-pointer transition-all shadow-sm max-w-[80%]"
+          >
+            <Building className="w-4 h-4 text-orange-500 shrink-0" />
+            <span className="text-xs font-bold text-stone-900 truncate">
+              {currentVault.propertyName}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black shrink-0">
+              Switch ▾
+            </span>
+          </div>
+        ) : (
+          <button 
+            onClick={onOpenCreate}
+            className="flex items-center space-x-2 bg-white hover:bg-stone-50 border border-orange-200 rounded-2xl px-3.5 py-2 cursor-pointer transition-all shadow-sm"
+          >
+            <Building className="w-4 h-4 text-orange-500 shrink-0" />
+            <span className="text-xs font-bold text-stone-900">
+              + Deploy First Lease Vault
+            </span>
+          </button>
+        )}
 
         <button
           onClick={onOpenInspector}
@@ -153,9 +165,15 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
           {/* Button 2: Share Link */}
           <div className="flex flex-col items-center space-y-1.5">
             <button
-              onClick={() => onOpenShare(currentVault)}
+              onClick={() => {
+                if (currentVault) {
+                  onOpenShare(currentVault);
+                } else {
+                  onOpenCreate();
+                }
+              }}
               className="w-12 h-12 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 hover:scale-105 active:scale-95 transition-all"
-              title="Share Payment Link with Tenant"
+              title={currentVault ? "Share Payment Link with Tenant" : "Deploy a Vault First"}
             >
               <Link2 className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -278,51 +296,72 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
           </span>
         </div>
 
-        <div className="space-y-2">
-          {vaults.map((vault) => (
-            <div
-              key={vault.id}
-              onClick={() => onSelectVault(vault)}
-              className="p-3.5 rounded-2xl bg-white border border-stone-200/90 hover:border-orange-300 flex items-center justify-between cursor-pointer transition-all shadow-sm hover:shadow"
+        {vaults.length === 0 ? (
+          <div className="p-6 rounded-2xl bg-white border border-dashed border-stone-300 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center mx-auto text-orange-600">
+              <Building className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-sm font-black text-stone-900">No Active Lease Vaults Yet</h4>
+              <p className="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
+                Add your first property to generate a secure Stellar caution deposit link for your tenant.
+              </p>
+            </div>
+            <button
+              onClick={onOpenCreate}
+              className="px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-md shadow-orange-500/25 inline-flex items-center gap-1.5 transition-all"
             >
-              <div className="flex items-center space-x-3 min-w-0">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
-                  vault.status === 'earning_yield'
-                    ? 'bg-orange-50 text-orange-600 border border-orange-200'
-                    : 'bg-amber-50 text-amber-700 border border-amber-200'
-                }`}>
-                  {vault.tenantName.charAt(0)}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-black text-stone-950 truncate">
-                      {vault.propertyName}
-                    </span>
-                    <span className="text-[10px] text-stone-500 font-mono font-bold">
-                      ({vault.houseCode})
+              <Plus className="w-4 h-4" />
+              <span>Deploy First Lease Vault</span>
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {vaults.map((vault) => (
+              <div
+                key={vault.id}
+                onClick={() => onSelectVault(vault)}
+                className="p-3.5 rounded-2xl bg-white border border-stone-200/90 hover:border-orange-300 flex items-center justify-between cursor-pointer transition-all shadow-sm hover:shadow"
+              >
+                <div className="flex items-center space-x-3 min-w-0">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+                    vault.status === 'earning_yield'
+                      ? 'bg-orange-50 text-orange-600 border border-orange-200'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }`}>
+                    {vault.tenantName.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-black text-stone-950 truncate">
+                        {vault.propertyName}
+                      </span>
+                      <span className="text-[10px] text-stone-500 font-mono font-bold">
+                        ({vault.houseCode})
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-stone-500 block truncate font-medium">
+                      Tenant: {vault.tenantName} • {vault.selectedPool.name.split(' ')[0]}
                     </span>
                   </div>
-                  <span className="text-[10px] text-stone-500 block truncate font-medium">
-                    Tenant: {vault.tenantName} • {vault.selectedPool.name.split(' ')[0]}
+                </div>
+
+                <div className="text-right shrink-0 pl-2">
+                  <div className="text-xs font-black font-mono text-stone-950">
+                    ${vault.depositAmount.toFixed(2)}
+                  </div>
+                  <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold mt-0.5 ${
+                    vault.status === 'earning_yield'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }`}>
+                    {vault.status === 'earning_yield' ? '✓ Earning Yield' : '⏳ Awaiting Deposit'}
                   </span>
                 </div>
               </div>
-
-              <div className="text-right shrink-0 pl-2">
-                <div className="text-xs font-black font-mono text-stone-950">
-                  ${vault.depositAmount.toFixed(2)}
-                </div>
-                <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold mt-0.5 ${
-                  vault.status === 'earning_yield'
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-amber-50 text-amber-700 border border-amber-200'
-                }`}>
-                  {vault.status === 'earning_yield' ? '✓ Earning Yield' : '⏳ Awaiting Deposit'}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 8. PROPERTY SWITCHER MODAL / BOTTOM SHEET (Light Theme) */}
@@ -340,30 +379,36 @@ export const LandlordDashboardView: React.FC<LandlordDashboardViewProps> = ({
             </div>
 
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {vaults.map((v) => (
-                <div
-                  key={v.id}
-                  onClick={() => {
-                    onSelectVault(v);
-                    setIsSwitchOpen(false);
-                  }}
-                  className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                    v.id === currentVault.id
-                      ? 'border-orange-500 bg-orange-50/50'
-                      : 'border-stone-200 bg-white hover:border-orange-200'
-                  }`}
-                >
-                  <div>
-                    <span className="text-xs font-bold text-stone-950 block truncate max-w-[200px]">
-                      {v.propertyName}
-                    </span>
-                    <span className="text-[10px] text-stone-500 font-mono font-medium">
-                      {v.houseCode} • ${v.depositAmount} USDC
-                    </span>
-                  </div>
-                  {v.id === currentVault.id && <Check className="w-4 h-4 text-orange-600" />}
+              {vaults.length === 0 ? (
+                <div className="py-6 text-center text-xs text-stone-500">
+                  No properties added yet. Click below to add your first property.
                 </div>
-              ))}
+              ) : (
+                vaults.map((v) => (
+                  <div
+                    key={v.id}
+                    onClick={() => {
+                      onSelectVault(v);
+                      setIsSwitchOpen(false);
+                    }}
+                    className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                      currentVault && v.id === currentVault.id
+                        ? 'border-orange-500 bg-orange-50/50'
+                        : 'border-stone-200 bg-white hover:border-orange-200'
+                    }`}
+                  >
+                    <div>
+                      <span className="text-xs font-bold text-stone-950 block truncate max-w-[200px]">
+                        {v.propertyName}
+                      </span>
+                      <span className="text-[10px] text-stone-500 font-mono font-medium">
+                        {v.houseCode} • ${v.depositAmount} USDC
+                      </span>
+                    </div>
+                    {currentVault && v.id === currentVault.id && <Check className="w-4 h-4 text-orange-600" />}
+                  </div>
+                ))
+              )}
             </div>
 
             <button

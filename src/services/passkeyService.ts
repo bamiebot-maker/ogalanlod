@@ -69,35 +69,25 @@ export async function registerPasskey(userId: string, userName: string): Promise
         localStorage.setItem(`ogalandlord_passkey_${userId}`, JSON.stringify(passkeyData));
         return passkeyData;
       }
-    } catch (err) {
-      console.warn('WebAuthn native create skipped/cancelled, activating device passkey fallback:', err);
+    } catch (err: any) {
+      // If user cancelled, dismissed, or failed device biometric/PIN check: REJECT! Do not bypass!
+      if (err?.name === 'NotAllowedError' || err?.name === 'AbortError' || err?.message?.toLowerCase().includes('cancel') || err?.message?.toLowerCase().includes('not allowed')) {
+        throw new Error('Device PIN/biometric verification was cancelled. Please confirm your phone PIN or fingerprint to proceed.');
+      }
+      console.warn('WebAuthn native create non-cancel error:', err);
+      throw new Error(err.message || 'Device authentication failed.');
     }
   }
 
-  // Graceful fallback: Device Biometric Passkey simulation
-  const fallbackPasskey: PasskeyCredential = {
-    id: `pk_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`,
-    rawId: btoa(`passkey_raw_${userId}`),
-    type: 'public-key',
-    userId,
-    userName,
-    deviceType: detectDeviceBiometricType(),
-    createdAt: new Date().toISOString(),
-  };
-
-  localStorage.setItem(`ogalandlord_passkey_${userId}`, JSON.stringify(fallbackPasskey));
-  return fallbackPasskey;
+  // If WebAuthn API is completely unavailable on this device/browser
+  throw new Error('Device biometric authentication is not supported or was cancelled.');
 }
 
 /**
  * Authenticate with biometric Passkey (Face ID / Fingerprint / Device PIN)
  */
-export async function authenticatePasskey(userId: string): Promise<boolean> {
+export async function authenticatePasskey(_userId?: string): Promise<boolean> {
   const isAvailable = isWebAuthnAvailable();
-  const existing = getStoredPasskey(userId);
-  if (existing) {
-    console.log(`Verifying biometric passkey for user: ${userId}`);
-  }
 
   if (isAvailable) {
     try {
@@ -116,13 +106,15 @@ export async function authenticatePasskey(userId: string): Promise<boolean> {
       if (assertion) {
         return true;
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === 'NotAllowedError' || err?.name === 'AbortError' || err?.message?.toLowerCase().includes('cancel')) {
+        throw new Error('Authentication cancelled by user.');
+      }
       console.warn('WebAuthn assertion fallback:', err);
+      throw new Error(err.message || 'Biometric authentication was not completed.');
     }
   }
 
-  // Simulate prompt delay for biometric feedback
-  await new Promise((resolve) => setTimeout(resolve, 800));
   return true;
 }
 

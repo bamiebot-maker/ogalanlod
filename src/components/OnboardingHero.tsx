@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, ArrowRight, Check, Fingerprint, Smartphone, Loader2 } from 'lucide-react';
+import { Shield, ArrowRight, Check, Fingerprint, Smartphone, Loader2, AlertCircle } from 'lucide-react';
 import { registerPasskey } from '../services/passkeyService';
 
 interface OnboardingHeroProps {
@@ -14,41 +14,43 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleDeviceLogin = async () => {
     setShowAuthModal(true);
     setIsVerifying(true);
     setIsSuccess(false);
+    setErrorMsg(null);
 
     try {
       // Triggers native Android/iOS WebAuthn system prompt: Screen Lock PIN, Fingerprint, or Face ID
       await registerPasskey('LND-88421', 'Chief Babatunde Alabi');
       setIsVerifying(false);
       setIsSuccess(true);
+      setErrorMsg(null);
       setTimeout(() => {
         setShowAuthModal(false);
         onStartLandlord();
       }, 700);
-    } catch (err) {
-      console.warn('Native biometric fallback:', err);
+    } catch (err: any) {
+      console.warn('Native biometric verification cancelled or failed:', err);
       setIsVerifying(false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        setShowAuthModal(false);
-        onStartLandlord();
-      }, 700);
+      setIsSuccess(false);
+      const message = err?.message || 'Device PIN or fingerprint verification was cancelled. Please confirm your phone PIN or fingerprint to proceed.';
+      setErrorMsg(message);
+      // STRICT: User must never be logged in on cancellation!
     }
   };
 
   return (
-    <div className="w-full h-full flex-1 flex flex-col justify-between px-5 py-4 text-center text-stone-900 relative overflow-hidden select-none bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5ECE0]">
+    <div className="w-full h-full min-h-[100dvh] sm:min-h-0 flex-1 flex flex-col justify-between px-5 py-4 text-center text-stone-900 relative overflow-hidden select-none bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5ECE0]">
       
       {/* Background Solar Glow Accents */}
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-orange-400/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* 1. Header Bar: Logo & Network Badge (Modeled after Ipin) */}
-      <header className="flex items-center justify-between z-10 pt-0.5">
+      <header className="flex items-center justify-between z-10 pt-0.5 shrink-0">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/25">
             <Shield className="w-4 h-4 text-white" />
@@ -64,10 +66,10 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
       </header>
 
       {/* 2. Visual Centerpiece: 3D Stack of Cards & Anchored Currency Coins (Modeled after Ipin) */}
-      <div className="my-auto py-1 flex flex-col items-center justify-center relative z-10">
+      <div className="flex-1 flex flex-col items-center justify-center py-2 relative z-10">
         
-        {/* Stack of 3D Credit Cards with strictly anchored coins */}
-        <div className="relative w-[260px] h-[154px] mx-auto transition-transform hover:scale-105 duration-300">
+        {/* Elevated Stack of 3D Credit Cards with strictly anchored coins */}
+        <div className="relative w-[264px] h-[156px] mx-auto mt-1 sm:mt-2 transition-transform hover:scale-105 duration-300">
           
           {/* Card 1: Bottom Blue/Indigo Card */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 rounded-[20px] transform rotate-[-8deg] translate-y-2.5 opacity-90 shadow-xl border border-white/20" />
@@ -112,34 +114,34 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
             </div>
           </div>
 
-          {/* Small Floating Currency Coins (Anchored directly to card corners only - Never overlaps text!) */}
-          <div className="absolute -top-2.5 -left-3 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[11px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200 animate-bounce">
+          {/* Small Floating Currency Coins (Anchored strictly to card corners only - Never overlaps text!) */}
+          <div className="absolute -top-3 -left-4 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[11px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
             ₦
           </div>
-          <div className="absolute -top-2 -right-3 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[11px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200 animate-pulse">
+          <div className="absolute -top-2 -right-4 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[11px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
             $
           </div>
-          <div className="absolute -bottom-2 -left-3 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[10px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
+          <div className="absolute top-[52%] -left-5 -translate-y-1/2 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[10px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
             €
           </div>
-          <div className="absolute -bottom-2 -right-3 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[9px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
+          <div className="absolute top-[52%] -right-5 -translate-y-1/2 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[8.5px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
             USDC
           </div>
         </div>
 
-        {/* 3. Headline & Human Subtitle (Compact font size & balanced weight like Ipin) */}
-        <div className="mt-4 px-2">
-          <h1 className="text-[20px] sm:text-[22px] font-bold text-stone-950 tracking-tight leading-snug">
+        {/* 3. Headline & Human Subtitle (Compact font size & balanced weight like Ipin, pushed down with mt-8) */}
+        <div className="mt-8 sm:mt-9 px-2 max-w-[320px] mx-auto">
+          <h1 className="text-[20px] sm:text-[22px] font-extrabold text-stone-950 tracking-tight leading-snug">
             The Smartest Way to Manage & Protect Rental Deposits
           </h1>
-          <p className="text-[12px] text-stone-600 mt-1.5 leading-normal max-w-[290px] mx-auto font-normal">
+          <p className="text-[12px] sm:text-[13px] text-stone-600 mt-2 leading-relaxed max-w-[290px] mx-auto font-normal">
             Create a live lease escrow in seconds. Tenants lock caution deposits with zero dispute risk, while funds actively earn 8.42% APY in stable dollars on Stellar.
           </p>
         </div>
       </div>
 
       {/* 4. Action Buttons: Clean Capsule Pills (Modeled after Ipin) */}
-      <div className="space-y-2 z-10 pt-1 pb-0.5 shrink-0">
+      <div className="space-y-2 z-10 pt-2 pb-1 shrink-0">
         {/* Primary CTA (Landlord: Electric Solar Capsule Pill) */}
         <button
           onClick={handleDeviceLogin}
@@ -186,25 +188,37 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
               </p>
             </div>
 
-            {/* Status Display */}
-            <div className="py-2.5 px-3 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 text-xs">
-              {isVerifying ? (
-                <div className="flex items-center justify-center gap-2 text-orange-600 font-bold animate-pulse">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Waiting for phone PIN / fingerprint...</span>
+            {/* Status & Error Display */}
+            {errorMsg ? (
+              <div className="py-3 px-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-left space-y-1 animate-fadeIn">
+                <div className="flex items-center gap-1.5 font-bold text-xs text-rose-800">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Verification Cancelled</span>
                 </div>
-              ) : isSuccess ? (
-                <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold">
-                  <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Phone Identity Verified! Opening Vault...</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-2 text-stone-700 font-medium">
-                  <Smartphone className="w-4 h-4 text-orange-500" />
-                  <span>Ready to verify with phone hardware</span>
-                </div>
-              )}
-            </div>
+                <p className="text-[11px] text-rose-700 leading-snug">
+                  {errorMsg}
+                </p>
+              </div>
+            ) : (
+              <div className="py-2.5 px-3 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 text-xs">
+                {isVerifying ? (
+                  <div className="flex items-center justify-center gap-2 text-orange-600 font-bold animate-pulse">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Waiting for phone PIN / fingerprint...</span>
+                  </div>
+                ) : isSuccess ? (
+                  <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold">
+                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>Phone Identity Verified! Opening Vault...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 text-stone-700 font-medium">
+                    <Smartphone className="w-4 h-4 text-orange-500" />
+                    <span>Ready to verify with phone hardware</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Action Trigger Button */}
             <button
@@ -213,14 +227,24 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
               className="w-full py-3.5 bg-gradient-to-r from-orange-500 via-[#FF6200] to-amber-500 hover:from-orange-600 text-white font-bold text-sm rounded-full shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer disabled:opacity-75"
             >
               <Fingerprint className="w-4 h-4" />
-              <span>{isVerifying ? 'Scanning on Phone...' : 'Authenticate with Phone PIN / Fingerprint'}</span>
+              <span>
+                {isVerifying 
+                  ? 'Scanning on Phone...' 
+                  : errorMsg 
+                  ? 'Try Again with Phone PIN' 
+                  : 'Authenticate with Phone PIN / Fingerprint'}
+              </span>
             </button>
 
             <button
-              onClick={() => setShowAuthModal(false)}
-              className="text-xs text-stone-400 hover:text-stone-600 pt-0.5 font-medium"
+              onClick={() => {
+                setShowAuthModal(false);
+                setErrorMsg(null);
+                setIsVerifying(false);
+              }}
+              className="text-xs text-stone-500 hover:text-stone-700 pt-0.5 font-medium underline cursor-pointer"
             >
-              Cancel
+              Dismiss & Go Back
             </button>
           </div>
         </div>

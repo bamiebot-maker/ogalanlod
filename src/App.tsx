@@ -31,7 +31,11 @@ export function App() {
     const saved = localStorage.getItem('ogalandlord_vaults');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Remove old mock/demo vaults so real landlords start clean
+          return parsed.filter((v: LeaseVault) => !['HSE-7821', 'HSE-9043', 'HSE-4412'].includes(v.id));
+        }
       } catch (e) {
         console.error(e);
       }
@@ -145,7 +149,7 @@ export function App() {
     setIsShareModalOpen(true);
   };
 
-  const currentVaultToDisplay = selectedVault || vaults[0];
+  const currentVaultToDisplay: LeaseVault | null = selectedVault || (vaults.length > 0 ? vaults[0] : null);
 
   // ==========================================
   // VIEW 1: FIRST-TIME ONBOARDING (Modeled after Image 1)
@@ -281,15 +285,31 @@ export function App() {
               onOpenShare={handleOpenShare}
             />
           ) : activeTab === 'split' ? (
-            <MobileHouseVaultView
-              vault={currentVaultToDisplay}
-              onBack={() => {
-                setSelectedVault(null);
-                setActiveTab(user.role === 'landlord' ? 'properties' : 'home');
-              }}
-              onUpdateVault={handleUpdateVault}
-              currentRole={user.role}
-            />
+            currentVaultToDisplay ? (
+              <MobileHouseVaultView
+                vault={currentVaultToDisplay}
+                onBack={() => {
+                  setSelectedVault(null);
+                  setActiveTab(user.role === 'landlord' ? 'properties' : 'home');
+                }}
+                onUpdateVault={handleUpdateVault}
+                currentRole={user.role}
+              />
+            ) : (
+              <div className="py-16 text-center space-y-3 bg-white rounded-3xl p-6 border border-stone-200">
+                <Building className="w-10 h-10 text-orange-500 mx-auto" />
+                <h3 className="text-base font-bold text-stone-900">No House Vault Selected</h3>
+                <p className="text-xs text-stone-500 max-w-xs mx-auto">
+                  Deploy a property lease vault first to view and manage its non-custodial Stellar escrow.
+                </p>
+                <button
+                  onClick={() => setIsCreateOpen(true)}
+                  className="px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/25"
+                >
+                  + Add New House
+                </button>
+              </div>
+            )
           ) : activeTab === 'yield' ? (
             <MobileYieldTracker
               user={user}
@@ -318,7 +338,7 @@ export function App() {
                 }}
                 onOpenInspector={() => setIsInspectorOpen(true)}
               />
-            ) : (
+            ) : currentVaultToDisplay ? (
               <MobileHouseVaultView
                 vault={currentVaultToDisplay}
                 onBack={() => {
@@ -328,6 +348,24 @@ export function App() {
                 onUpdateVault={handleUpdateVault}
                 currentRole={user.role}
               />
+            ) : (
+              <div className="py-16 text-center space-y-4 bg-white rounded-3xl p-6 border border-stone-200">
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center mx-auto text-orange-600">
+                  <Shield className="w-6 h-6" />
+                </div>
+                <h3 className="text-base font-black text-stone-900">Welcome, Tenant!</h3>
+                <p className="text-xs text-stone-600 max-w-xs mx-auto">
+                  You don't have an active lease deposit link loaded yet. Please open the unique link sent by your landlord (e.g. via WhatsApp) to pay your caution deposit into escrow.
+                </p>
+                <div className="pt-2 flex flex-col gap-2 max-w-xs mx-auto">
+                  <button
+                    onClick={handleToggleRole}
+                    className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/25"
+                  >
+                    Switch to Landlord Demo
+                  </button>
+                </div>
+              </div>
             )
           )}
         </main>
