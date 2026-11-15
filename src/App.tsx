@@ -152,8 +152,8 @@ export function App() {
   // ==========================================
   if (!hasOnboarded) {
     return (
-      <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
-        <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col justify-between overflow-hidden">
+      <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-center sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
+        <div className="w-full max-w-md h-screen sm:h-[844px] sm:max-h-[92vh] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col overflow-hidden">
           <OnboardingHero
             onStartLandlord={() => {
               setUser((prev) => ({

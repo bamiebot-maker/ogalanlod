@@ -34,90 +34,85 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
   };
 
   return (
-    <div className="min-h-full flex flex-col justify-between p-5 text-left text-stone-900 relative overflow-hidden select-none bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5ECE0]">
+    <div className="w-full h-full flex-1 flex flex-col justify-between p-6 text-center text-stone-900 relative overflow-hidden select-none bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5ECE0]">
       
-      {/* Background Solar Accents */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-orange-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-72 h-72 bg-amber-300/25 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Solar Glow Accents */}
+      <div className="absolute top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-orange-400/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl pointer-events-none" />
 
-      {/* 1. Header Bar: Logo & Network Badge */}
-      <header className="flex items-center justify-between z-10 pt-2">
+      {/* 1. Header Bar: Logo & Network Badge (Modeled after Ipin) */}
+      <header className="flex items-center justify-between z-10 pt-1">
         <div className="flex items-center space-x-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30">
+          <div className="w-9 h-9 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/25">
             <Shield className="w-5 h-5 text-white" />
           </div>
-          <div>
-            <span className="text-base font-black text-stone-950 tracking-tight block">
-              OgaLandlord
-            </span>
-            <span className="text-[10px] text-orange-600 font-bold block -mt-0.5">
-              Stellar Soroban Escrow
-            </span>
-          </div>
+          <span className="text-base font-extrabold text-stone-950 tracking-tight">
+            OgaLandlord
+          </span>
         </div>
 
-        <div className="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-[10px] font-black text-orange-600 flex items-center gap-1.5 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-          <span>Yield Escrow</span>
+        <div className="px-3 py-1 rounded-full bg-stone-200/60 text-stone-700 text-[11px] font-semibold tracking-tight">
+          Stellar Escrow
         </div>
       </header>
 
-      {/* 2. Visual Centerpiece: Floating Escrow Cards with Floating Currency Badges */}
-      <div className="my-auto py-5 flex flex-col items-center justify-center relative z-10">
+      {/* 2. Visual Centerpiece: 3D Stack of Cards & Small Floating Coins (Modeled after Ipin) */}
+      <div className="my-auto py-2 flex flex-col items-center justify-center relative z-10">
         
-        {/* Floating Currency Orbs */}
-        <div className="absolute -top-2 left-6 w-9 h-9 rounded-full bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center text-xs font-black animate-bounce shadow-md">
+        {/* Small, Delicate Floating Currency Coins */}
+        <div className="absolute -top-1 left-7 w-7 h-7 rounded-full bg-[#FFB800] text-stone-950 font-black text-xs flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200 animate-bounce">
           ₦
         </div>
-        <div className="absolute top-4 right-6 w-9 h-9 rounded-full bg-orange-100 border border-orange-300 text-orange-700 flex items-center justify-center text-xs font-black animate-pulse shadow-md">
+        <div className="absolute top-5 right-7 w-7 h-7 rounded-full bg-[#FFB800] text-stone-950 font-black text-xs flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200 animate-pulse">
           $
         </div>
-        <div className="absolute bottom-6 left-5 w-8 h-8 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 flex items-center justify-center text-xs font-black shadow-md">
+        <div className="absolute bottom-6 left-6 w-6 h-6 rounded-full bg-[#FFB800] text-stone-950 font-black text-[10px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
           €
         </div>
-        <div className="absolute bottom-4 right-8 w-10 h-10 rounded-full bg-purple-100 border border-purple-300 text-purple-800 flex items-center justify-center text-[10px] font-black shadow-md">
+        <div className="absolute bottom-5 right-8 w-7 h-7 rounded-full bg-[#FFB800] text-stone-950 font-black text-[10px] flex items-center justify-center shadow-md shadow-amber-500/20 border border-amber-200">
           USDC
         </div>
 
-        {/* Stack of Angled 3D Cards */}
-        <div className="relative w-72 h-44 transition-transform hover:scale-105 duration-300">
+        {/* Stack of 3D Credit Cards */}
+        <div className="relative w-[276px] h-[165px] transition-transform hover:scale-105 duration-300">
           
-          {/* Bottom Card (Deep Navy) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl transform rotate-[-8deg] translate-y-3 opacity-50 shadow-xl border border-slate-700/40" />
+          {/* Card 1: Bottom Blue/Indigo Card */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 rounded-[22px] transform rotate-[-8deg] translate-y-3 opacity-90 shadow-xl border border-white/20" />
           
-          {/* Middle Card (Coral / Rose) */}
-          <div className="absolute inset-0 bg-gradient-to-r from-rose-600 to-amber-600 rounded-3xl transform rotate-[-3deg] translate-y-1.5 opacity-70 shadow-xl border border-rose-400/40" />
+          {/* Card 2: Middle Fuchsia/Magenta Card */}
+          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-600 via-pink-600 to-rose-600 rounded-[22px] transform rotate-[-4deg] translate-y-1.5 opacity-90 shadow-xl border border-white/20" />
 
-          {/* Top Front Card (Electric Solar Orange & Gold Gradient) */}
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 rounded-3xl p-5 shadow-2xl shadow-orange-500/40 border border-orange-300/60 flex flex-col justify-between text-white">
+          {/* Card 3: Top Front Card (Electric Solar Orange & Gold) */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#FF5E00] via-[#FF6E00] to-[#FFA000] rounded-[22px] p-4 shadow-2xl shadow-orange-500/35 border border-white/30 flex flex-col justify-between text-white text-left">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-xl bg-black/20 border border-white/30 flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+                {/* Gold Card Chip */}
+                <div className="w-8 h-6 rounded-md bg-[#FFE082] border border-amber-300 flex items-center justify-center shadow-sm">
+                  <div className="w-4 h-3 border border-amber-400/60 rounded-xs" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-black text-white tracking-wider uppercase block">
-                    Lease Escrow
+                  <span className="text-[10px] font-black text-white tracking-wider uppercase block">
+                    OGALANDLORD
                   </span>
-                  <span className="text-[9px] text-orange-100 font-mono font-semibold">
+                  <span className="text-[8px] text-orange-100 font-medium">
                     SOROBAN • SEP-43
                   </span>
                 </div>
               </div>
-              <span className="text-xs font-mono text-orange-100 font-black">
+              <span className="text-[11px] font-mono text-orange-100 font-bold">
                 •••• 7821
               </span>
             </div>
 
             <div>
-              <span className="text-[9px] font-bold text-orange-100 tracking-wider uppercase block">
-                Non-Custodial Escrow
+              <span className="text-[8.5px] font-bold text-orange-100 uppercase tracking-wider block">
+                NON-CUSTODIAL ESCROW • 100% MATH FAIR
               </span>
-              <div className="flex justify-between items-end">
+              <div className="flex justify-between items-end mt-0.5">
                 <span className="text-2xl font-black text-white font-mono tracking-tight">
                   8.42% APY
                 </span>
-                <span className="text-[10px] font-black text-orange-950 bg-white px-2.5 py-0.5 rounded-full shadow-sm">
+                <span className="text-[9.5px] font-bold text-orange-950 bg-white px-2.5 py-0.5 rounded-full shadow-sm">
                   80/20 Yield Split
                 </span>
               </div>
@@ -125,39 +120,39 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
           </div>
         </div>
 
-        {/* 3. Headline & Human Subtitle */}
-        <div className="mt-8 text-center px-2">
-          <h1 className="text-2xl sm:text-3xl font-black text-stone-950 tracking-tight leading-tight">
-            The Smartest Way to Lock & Grow Rental Deposits
+        {/* 3. Headline & Human Subtitle (Refined Font Size & Weight like Ipin) */}
+        <div className="mt-7 px-1">
+          <h1 className="text-[23px] sm:text-[25px] font-bold text-stone-950 tracking-tight leading-[1.22]">
+            The Smartest Way to Manage & Protect Rental Deposits
           </h1>
-          <p className="text-xs text-stone-600 mt-2.5 leading-relaxed max-w-xs mx-auto">
-            Say goodbye to move-out deposit fights. Caution funds are held in non-custodial smart escrow, actively earning <strong className="text-orange-600 font-bold">8.4% APY in stable dollars</strong> on Stellar.
+          <p className="text-[12.5px] text-stone-600 mt-2.5 leading-relaxed max-w-[315px] mx-auto font-normal">
+            Create a live lease escrow in seconds. Tenants lock caution deposits with zero dispute risk, while funds actively earn 8.42% APY in stable dollars on Stellar.
           </p>
         </div>
       </div>
 
-      {/* 4. Action Buttons (High-Contrast Energy) */}
-      <div className="space-y-3 z-10 pt-2 pb-1">
-        {/* Primary CTA (Landlord: Bold Electric Solar) */}
+      {/* 4. Action Buttons: Clean Capsule Pills (Modeled after Ipin) */}
+      <div className="space-y-2.5 z-10 pt-1 pb-0.5">
+        {/* Primary CTA (Landlord: Electric Solar Capsule Pill) */}
         <button
           onClick={() => setShowPinModal(true)}
-          className="w-full py-4 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-sm rounded-2xl shadow-xl shadow-orange-500/35 transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
+          className="w-full py-3.5 bg-gradient-to-r from-orange-500 via-[#FF6200] to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-[14px] rounded-full shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
         >
           <span>Create Lease Vault</span>
-          <ArrowRight className="w-4 h-4 stroke-[3]" />
+          <ArrowRight className="w-4 h-4 stroke-[2.5]" />
         </button>
 
-        {/* Secondary CTA (Tenant: Pure White with Crisp Border) */}
+        {/* Secondary CTA (Tenant: Pure White Capsule Pill) */}
         <button
           onClick={onStartTenant}
-          className="w-full py-3.5 bg-white hover:bg-stone-50 text-stone-900 font-bold text-xs rounded-2xl border border-stone-200/90 shadow-md transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
+          className="w-full py-3.5 bg-white hover:bg-stone-50 text-stone-800 font-bold text-[14px] rounded-full border border-stone-200/90 shadow-sm transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
         >
-          <span>I am a Tenant (Pay Deposit)</span>
-          <ArrowRight className="w-3.5 h-3.5 text-stone-400" />
+          <span>Join as Tenant (Pay Deposit)</span>
+          <ArrowRight className="w-4 h-4 text-stone-400 stroke-[2.5]" />
         </button>
 
         {/* Micro-copy */}
-        <p className="text-[10px] text-center text-stone-500 font-medium pt-1">
+        <p className="text-[11px] text-center text-stone-500 font-normal pt-0.5">
           No sign-up or seed phrase needed • 100% Secured by Device PIN
         </p>
       </div>
