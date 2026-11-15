@@ -152,8 +152,8 @@ export function App() {
   // ==========================================
   if (!hasOnboarded) {
     return (
-      <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-center sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
-        <div className="w-full max-w-md h-screen sm:h-[844px] sm:max-h-[92vh] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col overflow-hidden">
+      <div className="h-[100dvh] w-full bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-center sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden">
+        <div className="w-full max-w-md h-full sm:h-[844px] sm:max-h-[92vh] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col overflow-hidden">
           <OnboardingHero
             onStartLandlord={() => {
               setUser((prev) => ({
@@ -186,13 +186,13 @@ export function App() {
   // VIEW 2: AUTHENTICATED APP (Modeled after Image 2)
   // ==========================================
   return (
-    <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
+    <div className="h-[100dvh] w-full bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-center sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden">
       
-      {/* Mobile-first App Container */}
-      <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col justify-between overflow-hidden">
+      {/* Mobile-first App Container with Fixed Height on Mobile */}
+      <div className="w-full max-w-md h-full sm:h-[850px] sm:max-h-[92vh] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col overflow-hidden">
         
-        {/* Real App Header Bar with Role Switcher & Pollar Badge */}
-        <header className="px-4 pt-3 pb-2.5 flex items-center justify-between z-20 border-b border-stone-200/80 bg-[#FAF7F2]/90 backdrop-blur-md">
+        {/* Strictly Fixed Header Bar: Never moves during scroll */}
+        <header className="sticky top-0 z-30 shrink-0 px-4 pt-3 pb-2.5 flex items-center justify-between border-b border-stone-200/80 bg-[#FAF7F2]/95 backdrop-blur-md shadow-xs">
           <div 
             onClick={() => setActiveTab('home')}
             className="flex items-center space-x-2 cursor-pointer"
@@ -245,16 +245,16 @@ export function App() {
           </div>
         </header>
 
-        {/* Role Switch Feedback Toast */}
+        {/* Role Switch Feedback Toast (Stationary) */}
         {roleToast && (
-          <div className="bg-orange-500 text-white px-3 py-1.5 text-center text-[10px] font-bold shadow-sm animate-fadeIn">
+          <div className="bg-orange-500 text-white px-3 py-1.5 text-center text-[10px] font-bold shadow-sm animate-fadeIn shrink-0 z-20">
             {roleToast}
           </div>
         )}
 
-        {/* Hackathon Judge Interactive Guide Banner */}
+        {/* Hackathon Judge Interactive Guide Banner (Stationary) */}
         {showJudgeTip && (
-          <div className="bg-orange-50 border-b border-orange-200/80 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-stone-800">
+          <div className="bg-orange-50 border-b border-orange-200/80 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-stone-800 shrink-0 z-20">
             <span className="truncate">
               <strong className="text-orange-600 font-bold">💡 Judge Tip:</strong> Tap top pill to switch roles. In Tenant view, test the on-ramp checkout!
             </span>
@@ -268,8 +268,8 @@ export function App() {
           </div>
         )}
 
-        {/* Scrollable Screen Content with Safe Bottom Margin for Floating Nav */}
-        <main className="flex-1 overflow-y-auto px-4 pt-3 pb-32">
+        {/* Scrollable Screen Content: Only this scrolls underneath the immovable header */}
+        <main className="flex-1 overflow-y-auto overscroll-contain px-4 pt-3 pb-32">
           {activeTab === 'properties' ? (
             <ActivePropertiesView
               vaults={vaults}
