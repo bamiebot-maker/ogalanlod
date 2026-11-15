@@ -80,26 +80,26 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md">
-      <div className="w-full max-w-sm bg-slate-900 border-t sm:border border-slate-800 rounded-t-[32px] sm:rounded-[32px] p-5 shadow-2xl relative text-left">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/60 backdrop-blur-sm animate-fadeIn">
+      <div className="w-full max-w-sm bg-white border-t sm:border border-stone-200/90 rounded-t-[32px] sm:rounded-[32px] p-5 shadow-2xl relative text-left">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-              <Landmark className="w-4 h-4 text-emerald-400" />
+        <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center border border-orange-200">
+              <Landmark className="w-4 h-4 text-orange-500" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-white tracking-tight">
+              <h2 className="text-sm font-black text-stone-950 tracking-tight">
                 Payout Bank Account
               </h2>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-stone-500 font-medium">
                 Direct NGN off-ramp for rental yields & deposits
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-stone-400 hover:text-stone-900 rounded-full hover:bg-stone-100 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -109,13 +109,13 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
         <div className="py-4 space-y-3.5">
           {/* Bank Select */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-stone-700 mb-1">
               Select Bank
             </label>
             <select
               value={selectedBankCode}
               onChange={(e) => setSelectedBankCode(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
             >
               {banks.map((b) => (
                 <option key={`${b.code}-${b.name}`} value={b.code}>
@@ -127,7 +127,7 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
 
           {/* Account Number */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-bold text-stone-700 mb-1">
               10-Digit NUBAN Account Number
             </label>
             <div className="relative">
@@ -136,34 +136,34 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
                 maxLength={10}
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-mono font-bold text-white tracking-wider focus:outline-none focus:border-emerald-500"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F2] border border-stone-200 rounded-xl text-sm font-mono font-bold text-stone-950 tracking-wider focus:outline-none focus:border-orange-500 focus:bg-white"
                 placeholder="0123456789"
               />
               {isVerifying && (
-                <Loader2 className="w-4 h-4 text-emerald-400 animate-spin absolute right-3 top-3" />
+                <Loader2 className="w-4 h-4 text-orange-500 animate-spin absolute right-3 top-3" />
               )}
             </div>
           </div>
 
           {/* Verification Status Card */}
           {verifiedResult && (
-            <div className="p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-xl text-xs space-y-1 animate-fadeIn">
-              <div className="flex items-center space-x-1.5 text-emerald-400 font-bold text-[11px]">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs space-y-1 animate-fadeIn">
+              <div className="flex items-center space-x-1.5 text-emerald-700 font-black text-[11px]">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <span>Account Verified via NUBAN Network</span>
               </div>
-              <div className="text-sm font-black text-white tracking-tight">
+              <div className="text-sm font-black text-stone-950 tracking-tight">
                 {verifiedResult.accountName}
               </div>
-              <div className="text-[10px] text-slate-400">
+              <div className="text-[10px] text-stone-500 font-medium">
                 {verifiedResult.bankName} • {verifiedResult.accountNumber}
               </div>
             </div>
           )}
 
           {errorMsg && (
-            <div className="p-2.5 bg-rose-950/50 border border-rose-500/40 rounded-xl text-xs text-rose-300 flex items-center space-x-1.5">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center space-x-1.5">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -172,10 +172,10 @@ export const BankSetupModal: React.FC<BankSetupModalProps> = ({
           <button
             onClick={handleSave}
             disabled={!verifiedResult}
-            className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all ${
+            className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-md ${
               verifiedResult
-                ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20 active:scale-98'
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-orange-500/25 active:scale-98'
+                : 'bg-stone-100 text-stone-400 cursor-not-allowed shadow-none'
             }`}
           >
             <Check className="w-4 h-4" />

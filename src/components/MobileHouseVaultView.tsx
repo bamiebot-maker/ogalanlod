@@ -181,31 +181,31 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
   const isTenantView = currentRole === 'tenant';
 
   return (
-    <div className="bg-white text-slate-900 rounded-[32px] p-5 shadow-xl space-y-4 text-left transition-all pb-8">
+    <div className="bg-white text-stone-900 rounded-[32px] p-5 shadow-xl border border-stone-200/90 space-y-4 text-left transition-all pb-8">
       {/* 1. Top Navigation Bar */}
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:text-black hover:bg-slate-200 transition-colors"
+          className="w-9 h-9 rounded-full bg-stone-100 flex items-center justify-center text-stone-700 hover:text-stone-950 hover:bg-stone-200 transition-colors"
           title="Back to Properties"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
 
         <div className="flex items-center space-x-1.5">
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-200">
             {isTenantView ? 'Tenant View' : 'Landlord View'}
           </span>
           <button
             onClick={() => handleFastForward(6)}
-            className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold border border-emerald-200/60 transition-colors"
+            className="px-2.5 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-bold shadow-sm shadow-orange-500/20 hover:opacity-95 transition-opacity"
             title="Fast forward 6 months of compounding yield"
           >
             +6M Yield
           </button>
           <button
             onClick={handleResetTimeline}
-            className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+            className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:text-stone-900 transition-colors"
             title="Reset Timeline"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -216,7 +216,7 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
       {/* 2. Title Header: Property & Vault Identity */}
       <div>
         <div className="flex items-center gap-1.5 mb-1">
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 text-stone-700 font-mono">
             {vault.id}
           </span>
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 ${
@@ -232,36 +232,36 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
             {vault.status === 'earning_yield' ? 'Earning Yield (Active)' : vault.status === 'awaiting_deposit' ? 'Awaiting Deposit' : 'Settlement Mode'}
           </span>
         </div>
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-xl font-black text-stone-950 tracking-tight">
           Security Deposit Vault
         </h1>
-        <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-          <Building className="w-3 h-3 text-slate-400" />
+        <p className="text-xs text-stone-500 mt-0.5 flex items-center gap-1">
+          <Building className="w-3 h-3 text-stone-400" />
           <span>{vault.propertyName}</span>
         </p>
       </div>
 
       {/* 3. Escrow Deposit Balance Card */}
-      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between shadow-sm">
+      <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 text-lg shadow-sm">
+          <div className="w-11 h-11 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 text-lg shadow-sm">
             🛡️
           </div>
           <div>
-            <span className="text-[11px] text-slate-500 font-medium block">Protected Escrow Principal</span>
-            <div className="text-2xl font-bold text-slate-950 font-mono tracking-tight">
+            <span className="text-[11px] text-stone-500 font-medium block">Protected Escrow Principal</span>
+            <div className="text-2xl font-black text-stone-950 font-mono tracking-tight">
               ${vault.depositAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              <span className="text-xs font-semibold text-slate-500 ml-1">USDC</span>
+              <span className="text-xs font-bold text-orange-600 ml-1">USDC</span>
             </div>
-            <span className="text-[10px] text-slate-400">≈ ₦{(vault.depositAmount * 1500).toLocaleString()} NGN</span>
+            <span className="text-[10px] text-stone-500">≈ ₦{(vault.depositAmount * 1500).toLocaleString()} NGN</span>
           </div>
         </div>
 
         <div className="text-right">
-          <span className="text-[10px] text-slate-400 font-medium block">
+          <span className="text-[10px] text-stone-500 font-medium block">
             {vault.simulatedMonthsElapsed ? `Month ${vault.simulatedMonthsElapsed} of ${vault.leaseDurationMonths}` : '12 Mo. Lease'}
           </span>
-          <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100/80 text-emerald-800">
+          <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700">
             {vault.selectedPool.apy}% APY
           </span>
         </div>
@@ -273,74 +273,74 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
         <div className="flex flex-col items-center space-y-1">
           <button 
             onClick={() => setIsBankModalOpen(true)}
-            className="w-11 h-11 rounded-full bg-[#181a20] text-white flex items-center justify-center hover:bg-black transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full bg-[#18120C] text-white flex items-center justify-center hover:bg-stone-900 transition-all shadow-md active:scale-95"
             title="Set Verified Payout Bank Account"
           >
-            <Landmark className="w-4 h-4 text-emerald-400" />
+            <Landmark className="w-4 h-4 text-orange-400" />
           </button>
-          <span className="text-[10px] text-slate-600 font-semibold">{savedBank ? 'Bank Set' : 'Bank'}</span>
+          <span className="text-[10px] text-stone-600 font-semibold">{savedBank ? 'Bank Set' : 'Bank'}</span>
         </div>
 
         {/* Button 2: Contract */}
         <div className="flex flex-col items-center space-y-1">
           <button 
             onClick={() => setShowContractDetails(!showContractDetails)}
-            className="w-11 h-11 rounded-full bg-[#181a20] text-white flex items-center justify-center hover:bg-black transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full bg-[#18120C] text-white flex items-center justify-center hover:bg-stone-900 transition-all shadow-md active:scale-95"
             title="View Stellar Soroban Contract Details"
           >
             <ShieldCheck className="w-4 h-4 text-white" />
           </button>
-          <span className="text-[10px] text-slate-600 font-semibold">Contract</span>
+          <span className="text-[10px] text-stone-600 font-semibold">Contract</span>
         </div>
 
         {/* Button 3: Terms */}
         <div className="flex flex-col items-center space-y-1">
           <button 
             onClick={() => alert(`Lease Escrow Rules:\n• Principal ($${vault.depositAmount} USDC) is locked in Pollar Yield Vault.\n• ${vault.yieldSplitTenantPercent}% of all yield goes to Tenant (${vault.tenantName}).\n• ${100 - vault.yieldSplitTenantPercent}% goes to Landlord (${vault.landlordName}).\n• Mutual SEP-43 sign-off required for damage deductions.`)}
-            className="w-11 h-11 rounded-full bg-[#181a20] text-white flex items-center justify-center hover:bg-black transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full bg-[#18120C] text-white flex items-center justify-center hover:bg-stone-900 transition-all shadow-md active:scale-95"
             title="View Tenancy Agreement Terms"
           >
             <FileText className="w-4 h-4 text-white" />
           </button>
-          <span className="text-[10px] text-slate-600 font-semibold">Terms</span>
+          <span className="text-[10px] text-stone-600 font-semibold">Terms</span>
         </div>
 
         {/* Button 4: Invite / Share */}
         <div className="flex flex-col items-center space-y-1">
           <button 
             onClick={copyShareLink}
-            className="w-11 h-11 rounded-full bg-[#181a20] text-white flex items-center justify-center hover:bg-black transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full bg-[#18120C] text-white flex items-center justify-center hover:bg-stone-900 transition-all shadow-md active:scale-95"
             title="Share Vault Invite Link"
           >
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Link2 className="w-4 h-4 text-white" />}
+            {copiedLink ? <Check className="w-4 h-4 text-orange-400" /> : <Link2 className="w-4 h-4 text-white" />}
           </button>
-          <span className="text-[10px] text-slate-600 font-semibold">{copiedLink ? 'Copied' : 'Invite'}</span>
+          <span className="text-[10px] text-stone-600 font-semibold">{copiedLink ? 'Copied' : 'Invite'}</span>
         </div>
 
         {/* Button 5: Explorer */}
         <div className="flex flex-col items-center space-y-1">
           <button 
             onClick={() => window.open(`https://stellar.expert/explorer/testnet/contract/${vault.selectedPool.contractId}`, '_blank')}
-            className="w-11 h-11 rounded-full bg-[#181a20] text-white flex items-center justify-center hover:bg-black transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full bg-[#18120C] text-white flex items-center justify-center hover:bg-stone-900 transition-all shadow-md active:scale-95"
             title="View Soroban Contract on Stellar Expert"
           >
             <ExternalLink className="w-4 h-4 text-white" />
           </button>
-          <span className="text-[10px] text-slate-600 font-semibold">Explorer</span>
+          <span className="text-[10px] text-stone-600 font-semibold">Explorer</span>
         </div>
       </div>
 
       {/* Contract Details Drawer (if clicked) */}
       {showContractDetails && (
-        <div className="p-3 bg-slate-900 text-slate-200 rounded-2xl text-[11px] space-y-1.5 border border-slate-800 animate-fadeIn">
-          <div className="flex justify-between items-center text-slate-400 font-semibold">
+        <div className="p-3 bg-stone-900 text-stone-200 rounded-2xl text-[11px] space-y-1.5 border border-stone-800 animate-fadeIn">
+          <div className="flex justify-between items-center text-stone-400 font-semibold">
             <span>Stellar Soroban Contract</span>
-            <span className="text-emerald-400 font-mono text-[10px]">Testnet</span>
+            <span className="text-orange-400 font-mono text-[10px]">Testnet</span>
           </div>
-          <div className="font-mono text-[10px] text-slate-300 break-all bg-slate-950 p-2 rounded-lg border border-slate-800">
+          <div className="font-mono text-[10px] text-stone-300 break-all bg-stone-950 p-2 rounded-lg border border-stone-800">
             {vault.selectedPool.contractId}
           </div>
-          <div className="flex justify-between text-slate-400 text-[10px] pt-1">
+          <div className="flex justify-between text-stone-400 text-[10px] pt-1">
             <span>Protocol: <strong className="text-white">{vault.selectedPool.provider}</strong></span>
             <span>Asset: <strong className="text-white">USDC</strong></span>
           </div>
@@ -351,19 +351,19 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
       <div className="space-y-3 pt-1">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+            <h2 className="text-xs font-black uppercase tracking-wider text-stone-800">
               Lease Parties & Escrow
             </h2>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-stone-500">
               SEP-43 co-signers for deposit lock & release
             </p>
           </div>
 
-          <div className="flex bg-slate-100 p-0.5 rounded-full text-xs">
+          <div className="flex bg-stone-100 p-0.5 rounded-full text-xs">
             <button
               onClick={() => setActiveTab('signatories')}
               className={`px-2.5 py-1 rounded-full font-bold text-[10px] transition-all ${
-                activeTab === 'signatories' ? 'bg-[#181a20] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'signatories' ? 'bg-[#18120C] text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Signatories
@@ -371,7 +371,7 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
             <button
               onClick={() => setActiveTab('percentages')}
               className={`px-2.5 py-1 rounded-full font-bold text-[10px] transition-all ${
-                activeTab === 'percentages' ? 'bg-[#181a20] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'percentages' ? 'bg-[#18120C] text-white shadow-sm' : 'text-stone-600 hover:text-stone-900'
               }`}
             >
               Yield Split %
@@ -382,93 +382,93 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
         {activeTab === 'signatories' ? (
           <div className="grid grid-cols-3 gap-2.5 text-center pt-1">
             {/* Landlord */}
-            <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center space-y-1.5 relative group">
+            <div className="p-2.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 flex flex-col items-center space-y-1.5 relative group">
               <div className="relative">
                 <img
                   src={vault.landlordAvatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'}
                   alt={vault.landlordName}
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-emerald-500"
+                  className="w-11 h-11 rounded-full object-cover ring-2 ring-orange-500"
                 />
-                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
+                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
                   ✓
                 </span>
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block truncate max-w-[85px]">
+                <span className="text-xs font-bold text-stone-950 block truncate max-w-[85px]">
                   {vault.landlordName}
                 </span>
-                <span className="text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
+                <span className="text-[9px] font-bold text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
                   Landlord
                 </span>
               </div>
-              <span className="text-[9px] text-slate-400 font-mono">
+              <span className="text-[9px] text-stone-400 font-mono">
                 {vault.landlordId || 'LND-88421'}
               </span>
             </div>
 
             {/* Tenant */}
-            <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center space-y-1.5 relative group">
+            <div className="p-2.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 flex flex-col items-center space-y-1.5 relative group">
               <div className="relative">
                 <img
                   src={vault.tenantAvatar || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'}
                   alt={vault.tenantName}
-                  className="w-11 h-11 rounded-full object-cover ring-2 ring-emerald-500"
+                  className="w-11 h-11 rounded-full object-cover ring-2 ring-orange-500"
                 />
-                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
+                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
                   ✓
                 </span>
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block truncate max-w-[85px]">
+                <span className="text-xs font-bold text-stone-950 block truncate max-w-[85px]">
                   {vault.tenantName}
                 </span>
-                <span className="text-[9px] font-semibold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
+                <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
                   Tenant
                 </span>
               </div>
-              <span className="text-[9px] text-slate-400 font-mono">
+              <span className="text-[9px] text-stone-400 font-mono">
                 {vault.tenantId || 'TNT-33108'}
               </span>
             </div>
 
             {/* Smart Contract */}
-            <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center space-y-1.5 relative group">
+            <div className="p-2.5 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 flex flex-col items-center space-y-1.5 relative group">
               <div className="relative">
-                <div className="w-11 h-11 rounded-full bg-slate-900 text-emerald-400 flex items-center justify-center ring-2 ring-emerald-500 font-bold">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <div className="w-11 h-11 rounded-full bg-[#18120C] text-orange-400 flex items-center justify-center ring-2 ring-orange-500 font-bold">
+                  <ShieldCheck className="w-5 h-5 text-orange-400" />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
+                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-orange-500 rounded-full flex items-center justify-center text-white text-[9px] font-black ring-2 ring-white">
                   ✓
                 </span>
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block truncate max-w-[85px]">
+                <span className="text-xs font-bold text-stone-950 block truncate max-w-[85px]">
                   Pollar Vault
                 </span>
-                <span className="text-[9px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
+                <span className="text-[9px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
                   Soroban
                 </span>
               </div>
-              <span className="text-[9px] text-slate-400 font-mono">
+              <span className="text-[9px] text-stone-400 font-mono">
                 SEP-43 Auth
               </span>
             </div>
           </div>
         ) : (
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-            <div className="flex justify-between text-slate-700">
+          <div className="p-3.5 rounded-2xl bg-[#FAF7F2] border border-stone-200 text-xs space-y-2">
+            <div className="flex justify-between text-stone-700">
               <span className="font-semibold">Tenant Principal Guarantee:</span>
-              <span className="font-mono font-bold text-slate-950">100% (${vault.depositAmount.toFixed(2)})</span>
+              <span className="font-mono font-bold text-stone-950">100% (${vault.depositAmount.toFixed(2)})</span>
             </div>
-            <div className="flex justify-between text-slate-700">
+            <div className="flex justify-between text-stone-700">
               <span className="font-semibold">Tenant Yield Split ({vault.yieldSplitTenantPercent}%):</span>
               <span className="font-mono font-bold text-emerald-600">+${yieldData.tenantShare.toFixed(2)} USDC</span>
             </div>
-            <div className="flex justify-between text-slate-700">
+            <div className="flex justify-between text-stone-700">
               <span className="font-semibold">Landlord Bonus Split ({100 - vault.yieldSplitTenantPercent}%):</span>
-              <span className="font-mono font-bold text-cyan-700">+${yieldData.landlordShare.toFixed(2)} USDC</span>
+              <span className="font-mono font-bold text-orange-600">+${yieldData.landlordShare.toFixed(2)} USDC</span>
             </div>
-            <p className="text-[10px] text-slate-500 pt-1 border-t border-slate-200/80">
+            <p className="text-[10px] text-stone-500 pt-1 border-t border-stone-200">
               Protected by non-custodial Soroban smart escrow. Funds cannot be diverted without mutual authorization.
             </p>
           </div>
@@ -513,14 +513,14 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
               <div className="space-y-2.5">
                 <button
                   onClick={() => setIsCheckoutOpen(true)}
-                  className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2 active:scale-98"
+                  className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 active:scale-98"
                 >
                   <CreditCard className="w-4 h-4" />
                   <span>
                     Pay ₦{(vault.depositAmount * 1500).toLocaleString()} Deposit via On-Ramp
                   </span>
                 </button>
-                <p className="text-[10px] text-center text-slate-500">
+                <p className="text-[10px] text-center text-stone-500">
                   Supports Nigerian Debit Cards, Bank Transfer & Direct USDC
                 </p>
               </div>
@@ -533,9 +533,9 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
                 </div>
                 <button
                   onClick={copyShareLink}
-                  className="w-full py-3 bg-[#181a20] hover:bg-black text-white font-bold text-xs rounded-2xl transition-all flex items-center justify-center space-x-2"
+                  className="w-full py-3 bg-[#18120C] hover:bg-stone-900 text-white font-bold text-xs rounded-2xl transition-all flex items-center justify-center space-x-2 shadow-md shadow-stone-900/10"
                 >
-                  <Link2 className="w-4 h-4 text-emerald-400" />
+                  <Link2 className="w-4 h-4 text-orange-400" />
                   <span>{copiedLink ? 'Link Copied to Clipboard!' : 'Copy Payment Link for Tenant'}</span>
                 </button>
               </div>
@@ -550,7 +550,7 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
               // LANDLORD CAN INITIATE MOVE-OUT SETTLEMENT
               <button
                 onClick={handleInitiateSettlement}
-                className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center active:scale-98"
+                className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center active:scale-98"
               >
                 <span>Initiate Move-Out Settlement</span>
               </button>
@@ -572,17 +572,17 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
         {/* STATE C: Settlement Requested (Mutual Co-Signing) */}
         {vault.status === 'settlement_requested' && (
           <div className="space-y-2.5">
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-1">
-              <span className="font-bold text-slate-800 block">Move-Out Settlement Terms:</span>
-              <div className="flex justify-between text-slate-600">
+            <div className="p-3 bg-[#FAF7F2] border border-stone-200 rounded-2xl text-xs space-y-1">
+              <span className="font-bold text-stone-800 block">Move-Out Settlement Terms:</span>
+              <div className="flex justify-between text-stone-600">
                 <span>Tenant Refund (Principal + 80% Yield):</span>
-                <strong className="text-slate-900 font-mono">${(vault.depositAmount + yieldData.tenantShare).toFixed(2)} USDC</strong>
+                <strong className="text-stone-900 font-mono">${(vault.depositAmount + yieldData.tenantShare).toFixed(2)} USDC</strong>
               </div>
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-stone-600">
                 <span>Landlord Yield Bonus (20%):</span>
-                <strong className="text-emerald-700 font-mono">+${yieldData.landlordShare.toFixed(2)} USDC</strong>
+                <strong className="text-orange-600 font-mono">+${yieldData.landlordShare.toFixed(2)} USDC</strong>
               </div>
-              <div className="flex justify-between text-slate-600">
+              <div className="flex justify-between text-stone-600">
                 <span>Damage Deductions:</span>
                 <strong className="text-emerald-700 font-mono">$0.00 (Zero Damages)</strong>
               </div>
@@ -595,7 +595,7 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
                   <button
                     onClick={handleTenantSignWithPasskey}
                     disabled={isProcessing}
-                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2"
+                    className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2"
                   >
                     <ScanFace className="w-4 h-4" />
                     <span>Approve Refund with Face ID / Fingerprint</span>
@@ -613,7 +613,7 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
                   <button
                     onClick={handleLandlordCoSignWithPasskey}
                     disabled={isProcessing}
-                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2"
+                    className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2"
                   >
                     <ScanFace className="w-4 h-4" />
                     <span>Co-Sign Release with Face ID / Fingerprint</span>
@@ -632,12 +632,12 @@ export const MobileHouseVaultView: React.FC<MobileHouseVaultViewProps> = ({
               <button
                 onClick={handleExecutePayout}
                 disabled={isProcessing}
-                className="w-full py-3.5 bg-slate-900 hover:bg-black text-white font-bold text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
+                className="w-full py-3.5 bg-[#18120C] hover:bg-black text-white font-bold text-sm rounded-2xl shadow-lg transition-all flex items-center justify-center space-x-2 active:scale-98"
               >
                 <span>Execute On-Chain Payout & Off-Ramp to Bank</span>
               </button>
             ) : (
-              <p className="text-[10px] text-center text-slate-500 italic">
+              <p className="text-[10px] text-center text-stone-500 italic">
                 {vault.tenantSignature && !vault.landlordSignature 
                   ? 'Tenant approved! Awaiting Landlord co-signature.'
                   : !vault.tenantSignature && vault.landlordSignature

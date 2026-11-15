@@ -152,8 +152,8 @@ export function App() {
   // ==========================================
   if (!hasOnboarded) {
     return (
-      <div className="min-h-screen bg-[#0d1117] sm:bg-gradient-to-tr sm:from-[#0b0f14] sm:via-[#111822] sm:to-[#081513] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
-        <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-slate-950 sm:rounded-[36px] sm:shadow-2xl sm:shadow-emerald-950/30 sm:border sm:border-slate-800/80 relative flex flex-col justify-between">
+      <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
+        <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col justify-between overflow-hidden">
           <OnboardingHero
             onStartLandlord={() => {
               setUser((prev) => ({
@@ -186,25 +186,25 @@ export function App() {
   // VIEW 2: AUTHENTICATED APP (Modeled after Image 2)
   // ==========================================
   return (
-    <div className="min-h-screen bg-[#0d1117] sm:bg-gradient-to-tr sm:from-[#0b0f14] sm:via-[#111822] sm:to-[#081513] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
+    <div className="min-h-screen bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900">
       
       {/* Mobile-first App Container */}
-      <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-slate-950 sm:rounded-[36px] sm:shadow-2xl sm:shadow-emerald-950/30 sm:border sm:border-slate-800/80 relative flex flex-col justify-between">
+      <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col justify-between overflow-hidden">
         
         {/* Real App Header Bar with Role Switcher & Pollar Badge */}
-        <header className="px-4 pt-3 pb-2.5 flex items-center justify-between z-20 border-b border-slate-900/60 bg-slate-950/80 backdrop-blur-md">
+        <header className="px-4 pt-3 pb-2.5 flex items-center justify-between z-20 border-b border-stone-200/80 bg-[#FAF7F2]/90 backdrop-blur-md">
           <div 
             onClick={() => setActiveTab('home')}
             className="flex items-center space-x-2 cursor-pointer"
           >
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm">
-              <Shield className="w-4 h-4 text-emerald-400" />
+            <div className="w-7 h-7 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/25">
+              <Shield className="w-4 h-4 text-white" />
             </div>
             <div>
-              <span className="text-xs font-bold text-white tracking-tight flex items-center gap-1">
+              <span className="text-xs font-black text-stone-950 tracking-tight flex items-center gap-1">
                 OgaLandlord
               </span>
-              <span className="text-[9px] text-emerald-400/80 font-medium block -mt-0.5">
+              <span className="text-[9px] text-orange-600 font-bold block -mt-0.5">
                 Pollar Stellar DeFi
               </span>
             </div>
@@ -214,21 +214,21 @@ export function App() {
             {/* Quick Role Switcher Pill */}
             <button
               onClick={handleToggleRole}
-              className={`px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition-all ${
+              className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm ${
                 user.role === 'landlord'
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                  : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                  ? 'bg-orange-500 text-white border border-orange-600 shadow-orange-500/20'
+                  : 'bg-white text-stone-800 border border-stone-300'
               }`}
               title="Click to toggle between Landlord View and Tenant View"
             >
               {user.role === 'landlord' ? (
                 <>
-                  <Building className="w-2.5 h-2.5 text-emerald-400" />
+                  <Building className="w-2.5 h-2.5 text-white" />
                   <span>Landlord View</span>
                 </>
               ) : (
                 <>
-                  <User className="w-2.5 h-2.5 text-cyan-400" />
+                  <User className="w-2.5 h-2.5 text-orange-500" />
                   <span>Tenant View</span>
                 </>
               )}
@@ -237,30 +237,30 @@ export function App() {
             {/* Pollar Inspector Modal Button */}
             <button
               onClick={() => setIsInspectorOpen(true)}
-              className="p-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[10px] text-slate-300 font-mono transition-colors"
+              className="p-1 rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 transition-colors shadow-sm"
               title="Inspect Pollar SDK Integration"
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <Sparkles className="w-3.5 h-3.5 text-orange-500" />
             </button>
           </div>
         </header>
 
         {/* Role Switch Feedback Toast */}
         {roleToast && (
-          <div className="bg-emerald-500/20 border-b border-emerald-500/40 px-3 py-1.5 text-center text-[10px] font-bold text-emerald-300 animate-fadeIn">
+          <div className="bg-orange-500 text-white px-3 py-1.5 text-center text-[10px] font-bold shadow-sm animate-fadeIn">
             {roleToast}
           </div>
         )}
 
         {/* Hackathon Judge Interactive Guide Banner */}
         {showJudgeTip && (
-          <div className="bg-gradient-to-r from-emerald-950/90 via-slate-900/90 to-cyan-950/90 border-b border-emerald-500/30 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-slate-300">
+          <div className="bg-orange-50 border-b border-orange-200/80 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-stone-800">
             <span className="truncate">
-              <strong className="text-emerald-400">💡 Judge Tip:</strong> Tap top pill to switch roles. In Tenant view, test the on-ramp checkout!
+              <strong className="text-orange-600 font-bold">💡 Judge Tip:</strong> Tap top pill to switch roles. In Tenant view, test the on-ramp checkout!
             </span>
             <button
               onClick={() => setShowJudgeTip(false)}
-              className="text-slate-400 hover:text-white ml-2 text-[10px] font-bold px-1"
+              className="text-stone-400 hover:text-stone-700 ml-2 text-[10px] font-bold px-1"
               title="Dismiss Tip"
             >
               ✕

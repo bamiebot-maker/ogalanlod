@@ -119,29 +119,29 @@ await sendPayment({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-950/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-stone-950/60 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-3xl bg-white border border-stone-200/90 rounded-3xl shadow-2xl overflow-hidden my-8 text-left">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800 bg-slate-900/60">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-100 bg-[#FAF7F2]">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-500">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <h2 className="text-lg font-black text-stone-950 flex items-center gap-2">
                 <span>Pollar SDK Technical Architecture</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-bold">
                   v0.12.0
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-stone-500 font-medium">
                 Official primitives powering OgaLandlord on Stellar Soroban
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+            className="p-2 text-stone-400 hover:text-stone-900 rounded-xl hover:bg-stone-200 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -151,48 +151,48 @@ await sendPayment({
         <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
           {/* Live Runtime Badge Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Active Chain</div>
-              <div className="text-xs font-bold text-white mt-1">Stellar Testnet</div>
+            <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-stone-200">
+              <div className="text-[10px] text-stone-500 uppercase font-bold">Active Chain</div>
+              <div className="text-xs font-black text-stone-950 mt-1">Stellar Testnet</div>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Gas Fee Model</div>
-              <div className="text-xs font-bold text-emerald-400 mt-1">Pollar Sponsored ($0.00)</div>
+            <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-stone-200">
+              <div className="text-[10px] text-stone-500 uppercase font-bold">Gas Fee Model</div>
+              <div className="text-xs font-black text-emerald-600 mt-1">Pollar Sponsored ($0.00)</div>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">Wallet Custody</div>
-              <div className="text-xs font-bold text-indigo-400 mt-1">Internal (No Seed Phrases)</div>
+            <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-stone-200">
+              <div className="text-[10px] text-stone-500 uppercase font-bold">Wallet Custody</div>
+              <div className="text-xs font-black text-orange-600 mt-1">Internal (No Seed Phrases)</div>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-              <div className="text-[10px] text-slate-400 uppercase font-semibold">DeFi Engine</div>
-              <div className="text-xs font-bold text-cyan-400 mt-1">DeFindex & Blend</div>
+            <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-stone-200">
+              <div className="text-[10px] text-stone-500 uppercase font-bold">DeFi Engine</div>
+              <div className="text-xs font-black text-stone-900 mt-1">DeFindex & Blend</div>
             </div>
           </div>
 
           {/* Snippets */}
           <div className="space-y-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-600">
               Integrated Pollar Primitives:
             </h3>
 
             {codeSnippets.map((item, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden"
+                className="rounded-2xl bg-[#18120C] border border-stone-800 overflow-hidden shadow-md"
               >
-                <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900/80 border-b border-slate-800">
+                <div className="flex items-center justify-between px-4 py-2.5 bg-stone-900 border-b border-stone-800">
                   <div>
                     <span className="text-xs font-bold text-white">{item.title}</span>
-                    <p className="text-[11px] text-slate-400">{item.desc}</p>
+                    <p className="text-[11px] text-stone-400">{item.desc}</p>
                   </div>
                   <button
                     onClick={() => copyCode(item.code, idx)}
-                    className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] transition-colors"
+                    className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-[11px] transition-colors"
                   >
                     {copiedIndex === idx ? (
                       <>
-                        <Check className="w-3 h-3 text-emerald-400" />
-                        <span className="text-emerald-400">Copied</span>
+                        <Check className="w-3 h-3 text-orange-400" />
+                        <span className="text-orange-400 font-bold">Copied</span>
                       </>
                     ) : (
                       <>
@@ -202,7 +202,7 @@ await sendPayment({
                     )}
                   </button>
                 </div>
-                <pre className="p-4 text-xs font-mono text-emerald-300/90 overflow-x-auto leading-relaxed">
+                <pre className="p-4 text-xs font-mono text-orange-200/90 overflow-x-auto leading-relaxed">
                   <code>{item.code}</code>
                 </pre>
               </div>
@@ -211,11 +211,11 @@ await sendPayment({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-900/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <div className="px-6 py-4 bg-[#FAF7F2] border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
           <span>Stellar Soroban Escrow & DeFi Architecture</span>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors font-medium"
+            className="px-4 py-2 bg-stone-900 hover:bg-black text-white rounded-xl transition-colors font-bold shadow-sm"
           >
             Close Inspector
           </button>
