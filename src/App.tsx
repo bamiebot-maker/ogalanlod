@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { MobileDashboard } from './components/MobileDashboard';
+import { OnboardingHero } from './components/OnboardingHero';
+import { LandlordDashboardView } from './components/LandlordDashboardView';
+import { ActivePropertiesView } from './components/ActivePropertiesView';
 import { MobileHouseVaultView } from './components/MobileHouseVaultView';
 import { MobileYieldTracker } from './components/MobileYieldTracker';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { OnboardingModal } from './components/OnboardingModal';
+import { ShareTenantLinkModal } from './components/ShareTenantLinkModal';
+import { BankSetupModal } from './components/BankSetupModal';
 import { CreateVaultModal } from './components/CreateVaultModal';
 import { PollarInspectorModal } from './components/PollarInspectorModal';
 import { INITIAL_VAULTS, DEFAULT_USER } from './data/mockData';
@@ -36,11 +39,19 @@ export function App() {
     return INITIAL_VAULTS;
   });
 
+  const [hasOnboarded, setHasOnboarded] = useState<boolean>(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('vault') || params.get('role')) return true;
+    return localStorage.getItem('ogalandlord_onboarded') === 'true';
+  });
+
   const [selectedVault, setSelectedVault] = useState<LeaseVault | null>(null);
-  const [activeTab, setActiveTab] = useState<'home' | 'split' | 'yield' | 'inspector'>('home');
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'home' | 'properties' | 'split' | 'yield' | 'inspector'>('home');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareTargetVault, setShareTargetVault] = useState<LeaseVault | null>(null);
   const [roleToast, setRoleToast] = useState<string | null>(null);
   const [showJudgeTip, setShowJudgeTip] = useState(true);
 
@@ -74,10 +85,13 @@ export function App() {
       setUser((prev) => ({
         ...prev,
         role: roleParam,
+        name: roleParam === 'tenant' ? 'Emeka Nwosu' : 'Chief Babatunde Alabi',
       }));
+      setHasOnboarded(true);
     }
 
     if (vaultId) {
+      setHasOnboarded(true);
       const found = vaults.find((v) => v.id === vaultId);
       if (found) {
         setSelectedVault(found);
@@ -126,8 +140,51 @@ export function App() {
     setTimeout(() => setRoleToast(null), 3000);
   };
 
+  const handleOpenShare = (vault: LeaseVault) => {
+    setShareTargetVault(vault);
+    setIsShareModalOpen(true);
+  };
+
   const currentVaultToDisplay = selectedVault || vaults[0];
 
+  // ==========================================
+  // VIEW 1: FIRST-TIME ONBOARDING (Modeled after Image 1)
+  // ==========================================
+  if (!hasOnboarded) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] sm:bg-gradient-to-tr sm:from-[#0b0f14] sm:via-[#111822] sm:to-[#081513] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
+        <div className="w-full max-w-md min-h-screen sm:min-h-[850px] bg-slate-950 sm:rounded-[36px] sm:shadow-2xl sm:shadow-emerald-950/30 sm:border sm:border-slate-800/80 relative flex flex-col justify-between">
+          <OnboardingHero
+            onStartLandlord={() => {
+              setUser((prev) => ({
+                ...prev,
+                role: 'landlord',
+                name: 'Chief Babatunde Alabi',
+              }));
+              localStorage.setItem('ogalandlord_onboarded', 'true');
+              setHasOnboarded(true);
+              setActiveTab('home');
+            }}
+            onStartTenant={() => {
+              setUser((prev) => ({
+                ...prev,
+                role: 'tenant',
+                name: 'Emeka Nwosu',
+              }));
+              localStorage.setItem('ogalandlord_onboarded', 'true');
+              setHasOnboarded(true);
+              setSelectedVault(vaults[0]);
+              setActiveTab('split');
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // VIEW 2: AUTHENTICATED APP (Modeled after Image 2)
+  // ==========================================
   return (
     <div className="min-h-screen bg-[#0d1117] sm:bg-gradient-to-tr sm:from-[#0b0f14] sm:via-[#111822] sm:to-[#081513] flex flex-col items-center justify-start sm:py-6 antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
       
@@ -136,8 +193,11 @@ export function App() {
         
         {/* Real App Header Bar with Role Switcher & Pollar Badge */}
         <header className="px-4 pt-3 pb-2.5 flex items-center justify-between z-20 border-b border-slate-900/60 bg-slate-950/80 backdrop-blur-md">
-          <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div 
+            onClick={() => setActiveTab('home')}
+            className="flex items-center space-x-2 cursor-pointer"
+          >
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm">
               <Shield className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
@@ -151,7 +211,7 @@ export function App() {
           </div>
 
           <div className="flex items-center space-x-1.5">
-            {/* Quick Role Switcher Pill (Great for Hackathon Judges & Testing) */}
+            {/* Quick Role Switcher Pill */}
             <button
               onClick={handleToggleRole}
               className={`px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 transition-all ${
@@ -196,7 +256,7 @@ export function App() {
         {showJudgeTip && (
           <div className="bg-gradient-to-r from-emerald-950/90 via-slate-900/90 to-cyan-950/90 border-b border-emerald-500/30 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-slate-300">
             <span className="truncate">
-              <strong className="text-emerald-400">💡 Judge Tip:</strong> Tap the top pill to switch between Landlord and Tenant to test on-ramp payment.
+              <strong className="text-emerald-400">💡 Judge Tip:</strong> Tap top pill to switch roles. In Tenant view, test the on-ramp checkout!
             </span>
             <button
               onClick={() => setShowJudgeTip(false)}
@@ -210,12 +270,22 @@ export function App() {
 
         {/* Scrollable Screen Content with Safe Bottom Margin for Floating Nav */}
         <main className="flex-1 overflow-y-auto px-4 pt-3 pb-32">
-          {activeTab === 'split' ? (
+          {activeTab === 'properties' ? (
+            <ActivePropertiesView
+              vaults={vaults}
+              onSelectVault={(v) => {
+                setSelectedVault(v);
+                setActiveTab('split');
+              }}
+              onOpenCreate={() => setIsCreateOpen(true)}
+              onOpenShare={handleOpenShare}
+            />
+          ) : activeTab === 'split' ? (
             <MobileHouseVaultView
               vault={currentVaultToDisplay}
               onBack={() => {
                 setSelectedVault(null);
-                setActiveTab('home');
+                setActiveTab(user.role === 'landlord' ? 'properties' : 'home');
               }}
               onUpdateVault={handleUpdateVault}
               currentRole={user.role}
@@ -225,27 +295,44 @@ export function App() {
               user={user}
               vaults={vaults}
               onOpenCreate={() => setIsCreateOpen(true)}
-              onOpenProfile={() => setIsOnboardingOpen(true)}
+              onOpenProfile={() => setIsBankModalOpen(true)}
             />
           ) : (
-            <MobileDashboard
-              user={user}
-              vaults={vaults}
-              onSelectVault={(v) => {
-                setSelectedVault(v);
-                setActiveTab('split');
-              }}
-              onOpenCreate={() => setIsCreateOpen(true)}
-              onOpenProfile={() => setIsOnboardingOpen(true)}
-              onSwitchTab={(t) => {
-                if (t === 'yield') setActiveTab('yield');
-                if (t === 'vault') setActiveTab('split');
-              }}
-            />
+            // HOME TAB: Modeled directly after Attached Image 2
+            user.role === 'landlord' ? (
+              <LandlordDashboardView
+                user={user}
+                vaults={vaults}
+                selectedVault={currentVaultToDisplay}
+                onSelectVault={(v) => {
+                  setSelectedVault(v);
+                  setActiveTab('split');
+                }}
+                onOpenCreate={() => setIsCreateOpen(true)}
+                onOpenBank={() => setIsBankModalOpen(true)}
+                onOpenShare={handleOpenShare}
+                onSwitchTab={(t) => {
+                  if (t === 'yield') setActiveTab('yield');
+                  if (t === 'properties') setActiveTab('properties');
+                  if (t === 'vault') setActiveTab('split');
+                }}
+                onOpenInspector={() => setIsInspectorOpen(true)}
+              />
+            ) : (
+              <MobileHouseVaultView
+                vault={currentVaultToDisplay}
+                onBack={() => {
+                  setSelectedVault(null);
+                  setActiveTab('home');
+                }}
+                onUpdateVault={handleUpdateVault}
+                currentRole={user.role}
+              />
+            )
           )}
         </main>
 
-        {/* Floating Bottom Nav */}
+        {/* Floating Bottom Nav (With Multi-Property Support) */}
         <MobileBottomNav
           activeTab={activeTab}
           userRole={user.role}
@@ -258,25 +345,34 @@ export function App() {
             }
           }}
           onOpenCreate={() => setIsCreateOpen(true)}
+          onOpenBank={() => setIsBankModalOpen(true)}
         />
       </div>
 
-      {/* Modals */}
-      <OnboardingModal
-        isOpen={isOnboardingOpen}
-        onComplete={(newProfile) => {
-          setUser(newProfile);
-          setIsOnboardingOpen(false);
-        }}
-        onClose={() => setIsOnboardingOpen(false)}
+      {/* MODALS */}
+      
+      {/* 1. Share Tenant Link / WhatsApp Modal */}
+      <ShareTenantLinkModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        vault={shareTargetVault}
       />
 
+      {/* 2. My Bank Setup Modal (NUBAN Verification) */}
+      <BankSetupModal
+        isOpen={isBankModalOpen}
+        onClose={() => setIsBankModalOpen(false)}
+        landlordName={user.name}
+      />
+
+      {/* 3. Create New House Vault Modal */}
       <CreateVaultModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreateVault={handleCreateVault}
       />
 
+      {/* 4. Pollar SDK Inspector Modal */}
       <PollarInspectorModal
         isOpen={isInspectorOpen}
         onClose={() => setIsInspectorOpen(false)}
