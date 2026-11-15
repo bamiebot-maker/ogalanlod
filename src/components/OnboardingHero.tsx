@@ -4,17 +4,27 @@ import { registerPasskey } from '../services/passkeyService';
 
 interface OnboardingHeroProps {
   onStartLandlord: () => void;
-  onStartTenant: () => void;
+  onStartTenant: (codeOrUrl?: string) => void;
+  initialVaultId?: string | null;
 }
 
 export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
   onStartLandlord,
   onStartTenant,
+  initialVaultId = null,
 }) => {
+  // Landlord verification state
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Tenant access & verification state
+  const [showTenantModal, setShowTenantModal] = useState(Boolean(initialVaultId));
+  const [tenantCode, setTenantCode] = useState(initialVaultId || '');
+  const [isTenantVerifying, setIsTenantVerifying] = useState(false);
+  const [isTenantSuccess, setIsTenantSuccess] = useState(false);
+  const [tenantErrorMsg, setTenantErrorMsg] = useState<string | null>(null);
 
   const handleDeviceLogin = async () => {
     setShowAuthModal(true);
@@ -23,8 +33,9 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
     setErrorMsg(null);
 
     try {
-      // Triggers native Android/iOS WebAuthn system prompt: Screen Lock PIN, Fingerprint, or Face ID
-      await registerPasskey('LND-88421', 'Chief Babatunde Alabi');
+      // Triggers native Android/iOS WebAuthn prompt for Landlord Vault (no demo names!)
+      const randomId = Math.floor(10000 + Math.random() * 90000);
+      await registerPasskey(`LND-${randomId}`, 'Landlord Vault');
       setIsVerifying(false);
       setIsSuccess(true);
       setErrorMsg(null);
@@ -38,6 +49,33 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
       setIsSuccess(false);
       const message = err?.message || 'Device PIN or fingerprint verification was cancelled. Please confirm your phone PIN or fingerprint to proceed.';
       setErrorMsg(message);
+      // STRICT: User must never be logged in on cancellation!
+    }
+  };
+
+  const handleTenantDeviceLogin = async () => {
+    setShowTenantModal(true);
+    setIsTenantVerifying(true);
+    setIsTenantSuccess(false);
+    setTenantErrorMsg(null);
+
+    try {
+      // Triggers native Android/iOS WebAuthn prompt for Tenant Vault (no demo names!)
+      const randomId = Math.floor(10000 + Math.random() * 90000);
+      await registerPasskey(`TNT-${randomId}`, 'Tenant Vault');
+      setIsTenantVerifying(false);
+      setIsTenantSuccess(true);
+      setTenantErrorMsg(null);
+      setTimeout(() => {
+        setShowTenantModal(false);
+        onStartTenant(tenantCode.trim() || undefined);
+      }, 700);
+    } catch (err: any) {
+      console.warn('Tenant biometric verification cancelled or failed:', err);
+      setIsTenantVerifying(false);
+      setIsTenantSuccess(false);
+      const message = err?.message || 'Phone PIN or fingerprint verification was cancelled. Please confirm your phone PIN to proceed.';
+      setTenantErrorMsg(message);
       // STRICT: User must never be logged in on cancellation!
     }
   };
@@ -153,7 +191,10 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
 
         {/* Secondary CTA (Tenant: Pure White Capsule Pill) */}
         <button
-          onClick={onStartTenant}
+          onClick={() => {
+            setShowTenantModal(true);
+            setTenantErrorMsg(null);
+          }}
           className="w-full py-3 bg-white hover:bg-stone-50 text-stone-800 font-bold text-[13.5px] rounded-full border border-stone-200/90 shadow-sm transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer"
         >
           <span>Join as Tenant (Pay Deposit)</span>
@@ -241,6 +282,115 @@ export const OnboardingHero: React.FC<OnboardingHeroProps> = ({
                 setShowAuthModal(false);
                 setErrorMsg(null);
                 setIsVerifying(false);
+              }}
+              className="text-xs text-stone-500 hover:text-stone-700 pt-0.5 font-medium underline cursor-pointer"
+            >
+              Dismiss & Go Back
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Real Tenant Phone Biometric / Screen PIN Verification & House Code Modal */}
+      {showTenantModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-stone-950/60 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-sm bg-white border-t sm:border border-stone-200 rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl text-center space-y-4 text-stone-900 max-h-[92vh] overflow-y-auto">
+            
+            {/* Biometric Graphic */}
+            <div className="w-16 h-16 rounded-3xl bg-orange-50 border border-orange-200 flex items-center justify-center mx-auto shadow-md shadow-orange-500/15 relative">
+              <Smartphone className="w-8 h-8 text-orange-600 animate-pulse" />
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
+                <Shield className="w-3.5 h-3.5 text-white" />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-base font-extrabold text-stone-950">
+                Tenant Security & Vault Access
+              </h3>
+              <p className="text-xs text-stone-500 mt-1 max-w-[270px] mx-auto">
+                Protect your caution deposit with your phone's screen lock PIN or fingerprint.
+              </p>
+            </div>
+
+            {/* House Code or Link Input */}
+            <div className="text-left space-y-1">
+              <label className="text-[11px] font-bold text-stone-700 block">
+                House Code or Landlord Link (Optional)
+              </label>
+              <input
+                type="text"
+                value={tenantCode}
+                onChange={(e) => setTenantCode(e.target.value)}
+                placeholder="e.g. LK-4B, HSE-7821 or paste link"
+                className="w-full px-3.5 py-2.5 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white placeholder-stone-400"
+              />
+              <p className="text-[10px] text-stone-500 leading-snug">
+                Enter the code or link your landlord sent you via WhatsApp/SMS. If you don't have one, leave blank to explore.
+              </p>
+            </div>
+
+            {/* Security Explanation */}
+            <div className="p-2.5 rounded-xl bg-orange-50/70 border border-orange-200/60 text-left text-[11px] text-stone-700 flex items-start gap-2">
+              <Fingerprint className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+              <span className="leading-snug">
+                <strong>Hardware Security:</strong> Whenever you check your deposit or claim your refund at move-out, only your phone PIN can authorize access.
+              </span>
+            </div>
+
+            {/* Status & Error Display */}
+            {tenantErrorMsg ? (
+              <div className="py-2.5 px-3 rounded-2xl bg-rose-50 border border-rose-200 text-left space-y-1 animate-fadeIn">
+                <div className="flex items-center gap-1.5 font-bold text-xs text-rose-800">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Verification Cancelled</span>
+                </div>
+                <p className="text-[11px] text-rose-700 leading-snug">
+                  {tenantErrorMsg}
+                </p>
+              </div>
+            ) : (
+              <div className="py-2.5 px-3 rounded-2xl bg-[#FAF7F2] border border-stone-200/80 text-xs">
+                {isTenantVerifying ? (
+                  <div className="flex items-center justify-center gap-2 text-orange-600 font-bold animate-pulse">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Waiting for phone PIN / fingerprint...</span>
+                  </div>
+                ) : isTenantSuccess ? (
+                  <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold">
+                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>Phone Identity Verified! Opening Vault...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 text-stone-700 font-medium">
+                    <Smartphone className="w-4 h-4 text-orange-500" />
+                    <span>Ready to verify with phone hardware</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Action Trigger Button */}
+            <button
+              onClick={handleTenantDeviceLogin}
+              disabled={isTenantVerifying || isTenantSuccess}
+              className="w-full py-3.5 bg-gradient-to-r from-orange-500 via-[#FF6200] to-amber-500 hover:from-orange-600 text-white font-bold text-sm rounded-full shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 active:scale-98 cursor-pointer disabled:opacity-75"
+            >
+              <Fingerprint className="w-4 h-4" />
+              <span>
+                {isTenantVerifying 
+                  ? 'Scanning on Phone...' 
+                  : tenantErrorMsg 
+                  ? 'Try Again with Phone PIN' 
+                  : 'Verify Phone PIN & Access Vault'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                setShowTenantModal(false);
+                setTenantErrorMsg(null);
+                setIsTenantVerifying(false);
               }}
               className="text-xs text-stone-500 hover:text-stone-700 pt-0.5 font-medium underline cursor-pointer"
             >

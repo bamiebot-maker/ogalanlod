@@ -19,7 +19,7 @@ interface BankSetupModalProps {
 export const BankSetupModal: React.FC<BankSetupModalProps> = ({
   isOpen,
   onClose,
-  landlordName = 'Chief Babatunde Alabi',
+  landlordName = 'Landlord',
 }) => {
   const [banks, setBanks] = useState<NigerianBank[]>(POPULAR_NIGERIAN_BANKS);
   const [selectedBankCode, setSelectedBankCode] = useState('058'); // GTBank default

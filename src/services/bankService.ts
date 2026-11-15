@@ -114,7 +114,7 @@ export async function resolveBankAccount(
       return {
         success: true,
         accountNumber: cleanNumber,
-        accountName: userNameHint ? userNameHint.toUpperCase() : 'CHIEF BABATUNDE ALABI',
+        accountName: userNameHint ? userNameHint.toUpperCase() : 'VERIFIED BENEFICIARY',
         bankName: matchedBank.name,
         bankCode,
       };
@@ -140,7 +140,7 @@ export async function resolveBankAccount(
   return {
     success: true,
     accountNumber: cleanNumber,
-    accountName: userNameHint ? userNameHint.toUpperCase() : 'CHIEF BABATUNDE ALABI',
+    accountName: userNameHint ? userNameHint.toUpperCase() : 'VERIFIED BENEFICIARY',
     bankName: matchedBank.name,
     bankCode,
   };

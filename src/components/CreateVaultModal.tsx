@@ -25,8 +25,8 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [propertyName, setPropertyName] = useState('Lekki Phase 1 Penthouse - Flat 4B');
   const [propertyAddress, setPropertyAddress] = useState('14 Admiralty Way, Lekki Phase 1, Lagos');
-  const [landlordName, setLandlordName] = useState('Chief Babatunde Alabi');
-  const [tenantName, setTenantName] = useState('Emeka Nwosu');
+  const [landlordName, setLandlordName] = useState('');
+  const [tenantName, setTenantName] = useState('');
   const [tenantPhone, setTenantPhone] = useState('+234 803 987 6543');
   const [depositAmount, setDepositAmount] = useState<number>(500);
   const [currencyMode, setCurrencyMode] = useState<'USD' | 'NGN'>('USD');
@@ -65,12 +65,12 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
         propertyName,
         propertyAddress,
         landlordId: 'LND-88421',
-        landlordName,
+        landlordName: landlordName.trim() || 'Landlord',
         landlordAddress: wallet?.address || 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',
         landlordAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
         tenantId: `TNT-${Math.floor(10000 + Math.random() * 90000)}`,
-        tenantName,
-        tenantEmail: `${tenantName.toLowerCase().replace(/\s+/g, '.')}@example.com`,
+        tenantName: tenantName.trim() || 'Tenant',
+        tenantEmail: `${(tenantName.trim() || 'tenant').toLowerCase().replace(/\s+/g, '.')}@example.com`,
         tenantAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
         depositAmount,
         leaseDurationMonths,
@@ -192,9 +192,9 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
                   </label>
                   <input
                     type="text"
-                    required
                     value={landlordName}
                     onChange={(e) => setLandlordName(e.target.value)}
+                    placeholder="e.g. Babatunde Alabi"
                     className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
                   />
                 </div>
@@ -204,9 +204,9 @@ export const CreateVaultModal: React.FC<CreateVaultModalProps> = ({
                   </label>
                   <input
                     type="text"
-                    required
                     value={tenantName}
                     onChange={(e) => setTenantName(e.target.value)}
+                    placeholder="e.g. Emeka Nwosu"
                     className="w-full px-3 py-2 bg-[#FAF7F2] border border-stone-200 rounded-xl text-xs text-stone-900 font-medium focus:outline-none focus:border-orange-500 focus:bg-white"
                   />
                 </div>

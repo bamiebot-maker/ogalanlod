@@ -2,8 +2,8 @@ import type { LeaseVault, YieldPool, UserProfile } from '../types';
 
 export const DEFAULT_USER: UserProfile = {
   id: 'LND-88421',
-  name: 'Chief Babatunde Alabi',
-  email: 'chief.alabi@ogalandlord.ng',
+  name: 'Landlord',
+  email: 'landlord@ogalandlord.ng',
   role: 'landlord',
   avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
   stellarAddress: 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN',

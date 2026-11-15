@@ -44,9 +44,12 @@ export function App() {
   });
 
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('vault') || params.get('role')) return true;
     return localStorage.getItem('ogalandlord_onboarded') === 'true';
+  });
+
+  const [urlVaultId, setUrlVaultId] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('vault');
   });
 
   const [selectedVault, setSelectedVault] = useState<LeaseVault | null>(null);
@@ -89,23 +92,20 @@ export function App() {
       setUser((prev) => ({
         ...prev,
         role: roleParam,
-        name: roleParam === 'tenant' ? 'Emeka Nwosu' : 'Chief Babatunde Alabi',
+        name: roleParam === 'tenant' ? 'Tenant' : 'Landlord',
       }));
-      setHasOnboarded(true);
     }
 
     if (vaultId) {
-      setHasOnboarded(true);
-      const found = vaults.find((v) => v.id === vaultId);
+      setUrlVaultId(vaultId);
+      const found = vaults.find((v) => v.id.toLowerCase() === vaultId.toLowerCase() || v.houseCode.toLowerCase() === vaultId.toLowerCase());
       if (found) {
         setSelectedVault(found);
-        setActiveTab('split');
       } else {
         fetchVaultById(vaultId).then((cloudVault) => {
           if (cloudVault) {
             setSelectedVault(cloudVault);
             setVaults((prev) => [cloudVault, ...prev.filter((v) => v.id !== cloudVault.id)]);
-            setActiveTab('split');
           }
         });
       }
@@ -131,15 +131,15 @@ export function App() {
       ...prev,
       role: nextRole,
       id: nextRole === 'landlord' ? 'LND-88421' : 'TNT-33108',
-      name: nextRole === 'landlord' ? 'Chief Babatunde Alabi' : 'Emeka Nwosu',
+      name: nextRole === 'landlord' ? 'Landlord' : 'Tenant',
       avatarUrl: nextRole === 'landlord'
         ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
         : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
     }));
     setRoleToast(
       nextRole === 'landlord'
-        ? 'Switched to Landlord View (Chief Babatunde Alabi — Managing Properties)'
-        : 'Switched to Tenant View (Emeka Nwosu — Rental Escrow & Payout)'
+        ? 'Switched to Landlord View (Managing Properties & Escrow)'
+        : 'Switched to Tenant View (Rental Escrow & Payout)'
     );
     setTimeout(() => setRoleToast(null), 3000);
   };
@@ -159,26 +159,60 @@ export function App() {
       <div className="h-[100dvh] w-full bg-[#F4EFE6] sm:bg-gradient-to-tr sm:from-[#F0EBE1] sm:via-[#FAF7F2] sm:to-[#F5EFE6] flex flex-col items-center justify-center sm:py-6 antialiased selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden">
         <div className="w-full max-w-md h-full sm:h-[844px] sm:max-h-[92vh] bg-[#FAF7F2] sm:rounded-[36px] sm:shadow-2xl sm:shadow-orange-950/10 sm:border sm:border-stone-200/80 relative flex flex-col overflow-hidden">
           <OnboardingHero
+            initialVaultId={urlVaultId}
             onStartLandlord={() => {
               setUser((prev) => ({
                 ...prev,
                 role: 'landlord',
-                name: 'Chief Babatunde Alabi',
+                name: 'Landlord',
               }));
               localStorage.setItem('ogalandlord_onboarded', 'true');
               setHasOnboarded(true);
               setActiveTab('home');
             }}
-            onStartTenant={() => {
+            onStartTenant={(codeOrUrl) => {
               setUser((prev) => ({
                 ...prev,
                 role: 'tenant',
-                name: 'Emeka Nwosu',
+                name: 'Tenant',
               }));
               localStorage.setItem('ogalandlord_onboarded', 'true');
               setHasOnboarded(true);
-              setSelectedVault(vaults[0]);
-              setActiveTab('split');
+
+              let targetCode = codeOrUrl || urlVaultId || '';
+              if (targetCode) {
+                if (targetCode.includes('vault=')) {
+                  try {
+                    const parsed = new URL(targetCode.startsWith('http') ? targetCode : `https://${targetCode}`);
+                    targetCode = parsed.searchParams.get('vault') || targetCode;
+                  } catch {}
+                }
+                const found = vaults.find(
+                  (v) => v.id.toLowerCase() === targetCode.toLowerCase() || 
+                         v.houseCode.toLowerCase() === targetCode.toLowerCase()
+                );
+                if (found) {
+                  setSelectedVault(found);
+                  setActiveTab('split');
+                } else {
+                  fetchVaultById(targetCode).then((cloudVault) => {
+                    if (cloudVault) {
+                      setSelectedVault(cloudVault);
+                      setVaults((prev) => [cloudVault, ...prev.filter((v) => v.id !== cloudVault.id)]);
+                      setActiveTab('split');
+                    } else {
+                      setActiveTab(vaults.length > 0 ? 'split' : 'home');
+                    }
+                  });
+                }
+              } else {
+                if (vaults.length > 0) {
+                  setSelectedVault(vaults[0]);
+                  setActiveTab('split');
+                } else {
+                  setActiveTab('home');
+                }
+              }
             }}
           />
         </div>
