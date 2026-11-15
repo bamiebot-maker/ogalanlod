@@ -41,6 +41,8 @@ export function App() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [roleToast, setRoleToast] = useState<string | null>(null);
+  const [showJudgeTip, setShowJudgeTip] = useState(true);
 
   // Sync user & vaults to localStorage
   useEffect(() => {
@@ -111,11 +113,17 @@ export function App() {
       ...prev,
       role: nextRole,
       id: nextRole === 'landlord' ? 'LND-88421' : 'TNT-33108',
-      name: nextRole === 'landlord' ? 'Chief James' : 'Jony L.',
+      name: nextRole === 'landlord' ? 'Chief Babatunde Alabi' : 'Emeka Nwosu',
       avatarUrl: nextRole === 'landlord'
         ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
         : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
     }));
+    setRoleToast(
+      nextRole === 'landlord'
+        ? 'Switched to Landlord View (Chief Babatunde Alabi — Managing Properties)'
+        : 'Switched to Tenant View (Emeka Nwosu — Rental Escrow & Payout)'
+    );
+    setTimeout(() => setRoleToast(null), 3000);
   };
 
   const currentVaultToDisplay = selectedVault || vaults[0];
@@ -177,6 +185,29 @@ export function App() {
           </div>
         </header>
 
+        {/* Role Switch Feedback Toast */}
+        {roleToast && (
+          <div className="bg-emerald-500/20 border-b border-emerald-500/40 px-3 py-1.5 text-center text-[10px] font-bold text-emerald-300 animate-fadeIn">
+            {roleToast}
+          </div>
+        )}
+
+        {/* Hackathon Judge Interactive Guide Banner */}
+        {showJudgeTip && (
+          <div className="bg-gradient-to-r from-emerald-950/90 via-slate-900/90 to-cyan-950/90 border-b border-emerald-500/30 px-3.5 py-1.5 flex items-center justify-between text-[10px] text-slate-300">
+            <span className="truncate">
+              <strong className="text-emerald-400">💡 Judge Tip:</strong> Tap the top pill to switch between Landlord and Tenant to test on-ramp payment.
+            </span>
+            <button
+              onClick={() => setShowJudgeTip(false)}
+              className="text-slate-400 hover:text-white ml-2 text-[10px] font-bold px-1"
+              title="Dismiss Tip"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* Scrollable Screen Content with Safe Bottom Margin for Floating Nav */}
         <main className="flex-1 overflow-y-auto px-4 pt-3 pb-32">
           {activeTab === 'split' ? (
@@ -217,6 +248,7 @@ export function App() {
         {/* Floating Bottom Nav */}
         <MobileBottomNav
           activeTab={activeTab}
+          userRole={user.role}
           onSelectTab={(tab) => {
             if (tab === 'inspector') {
               setIsInspectorOpen(true);
